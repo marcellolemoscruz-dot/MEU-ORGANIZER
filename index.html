@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta name="theme-color" content="#050b18"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Organizer"/>
+<meta name="description" content="Personal Organizer — Marcello"/>
+<title>Personal Organizer</title>
+
+<!-- PWA Manifest inline -->
+<link rel="manifest" href="manifest.json"/>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* ── RESET & BASE ─────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { height: 100%; overflow: hidden; }
+body {
+  font-family: 'Outfit', sans-serif;
+  background: #050b18;
+  color: #e8edf5;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-width: 430px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* ── CSS VARS ─────────────────────────────────────────── */
+:root {
+  --bg:        #050b18;
+  --bg2:       #0c1628;
+  --bg3:       #111e35;
+  --border:    #1a2d4a;
+  --text:      #e8edf5;
+  --muted:     #4a6080;
+  --dim:       #2a3f5a;
+  --accent:    #3b7fff;
+  --accent2:   #7c3aed;
+  --green:     #10b981;
+  --yellow:    #f59e0b;
+  --red:       #ef4444;
+  --pink:      #ec4899;
+  --r:         14px;
+  --r-sm:      10px;
+}
+
+/* ── SCROLLBAR ────────────────────────────────────────── */
+::-webkit-scrollbar { width: 2px; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* ── ANIMATIONS ───────────────────────────────────────── */
+@keyframes fadeUp   { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+@keyframes spin     { to { transform: rotate(360deg); } }
+@keyframes pulse    { 0%,100%{opacity:1} 50%{opacity:.4} }
+@keyframes shimmer  { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
+@keyframes slideIn  { from{transform:translateX(100%)} to{transform:translateX(0)} }
+@keyframes ping     { 0%,100%{transform:scale(1);opacity:.6} 50%{transform:scale(1.6);opacity:0} }
+
+/* ── HEADER ───────────────────────────────────────────── */
+.header {
+  background: linear-gradient(160deg, #0c1a35 0%, #050b18 100%);
+  padding: 52px 20px 16px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+.header::before {
+  content: '';
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 180px; height: 180px;
+  background: radial-gradient(circle, #3b7fff18 0%, transparent 70%);
+  border-radius: 50%;
+}
+.header-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 4px; }
+.greeting-label {
+  font-size: 10px; font-weight: 600; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--accent); margin-bottom: 4px;
+}
+.greeting-name {
+  font-size: 26px; font-weight: 800; line-height: 1.1;
+  letter-spacing: -.5px;
+  background: linear-gradient(135deg, #e8edf5 30%, #7c9cbf);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.header-date { font-size: 11px; color: var(--muted); margin-top: 6px; font-family: 'JetBrains Mono', monospace; }
+.btn-refresh {
+  width: 40px; height: 40px; border-radius: 50%; border: none; cursor: pointer;
+  background: var(--bg3); display: flex; align-items: center; justify-content: center;
+  font-size: 17px; flex-shrink: 0; transition: all .2s;
+  border: 1px solid var(--border);
+}
+.btn-refresh:active { transform: scale(.92); }
+.btn-refresh.loading span { display: inline-block; animation: spin .7s linear infinite; }
+
+/* ── STAT PILLS ───────────────────────────────────────── */
+.stats {
+  display: flex; gap: 8px; padding: 12px 20px;
+  flex-shrink: 0; overflow-x: auto; scrollbar-width: none;
+}
+.stat {
+  flex: 1; min-width: 72px;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--r-sm); padding: 10px 6px; text-align: center;
+  transition: transform .15s;
+}
+.stat:active { transform: scale(.95); }
+.stat-icon { font-size: 18px; margin-bottom: 3px; }
+.stat-val  { font-size: 20px; font-weight: 800; line-height: 1; min-height: 24px; display: flex; align-items: center; justify-content: center; }
+.stat-lbl  { font-size: 9px; color: var(--muted); margin-top: 2px; text-transform: uppercase; letter-spacing: .05em; }
+
+/* ── TAB BAR ──────────────────────────────────────────── */
+.tabs {
+  display: flex; gap: 4px; padding: 8px 20px;
+  background: var(--bg); border-bottom: 1px solid var(--border);
+  overflow-x: auto; scrollbar-width: none; flex-shrink: 0;
+}
+.tab {
+  flex-shrink: 0; padding: 7px 14px; border-radius: 20px; border: none;
+  cursor: pointer; font-size: 12px; font-weight: 600; font-family: 'Outfit', sans-serif;
+  transition: all .2s; white-space: nowrap;
+  background: var(--bg2); color: var(--muted); border: 1px solid transparent;
+}
+.tab.active {
+  background: var(--accent); color: #fff;
+  box-shadow: 0 0 16px #3b7fff44;
+}
+
+/* ── CONTENT ──────────────────────────────────────────── */
+.content {
+  flex: 1; overflow-y: auto; padding: 14px 20px 100px;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── SECTION ──────────────────────────────────────────── */
+.section {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--r); overflow: hidden; margin-bottom: 12px;
+  animation: fadeUp .35s ease both;
+}
+.section-head {
+  display: flex; align-items: center; gap: 7px;
+  padding: 11px 14px 8px;
+}
+.section-title {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .07em; color: var(--text); flex: 1;
+}
+.section-badge {
+  font-size: 10px; font-weight: 700; padding: 2px 8px;
+  border-radius: 20px; white-space: nowrap;
+}
+
+/* ── ROWS ─────────────────────────────────────────────── */
+.row {
+  display: flex; gap: 10px; padding: 10px 14px;
+  border-top: 1px solid var(--border);
+  animation: fadeUp .3s ease both;
+}
+.row-icon {
+  width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 15px;
+}
+.row-body { flex: 1; min-width: 0; }
+.row-title {
+  font-size: 12px; font-weight: 700; color: var(--text);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  margin-bottom: 2px;
+}
+.row-sub {
+  font-size: 11px; color: var(--muted);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.row-time { font-size: 10px; color: var(--dim); align-self: center; flex-shrink: 0; font-family: 'JetBrains Mono', monospace; }
+
+/* ── URGENCY DOT ──────────────────────────────────────── */
+.dot { position: relative; display: inline-flex; width: 8px; height: 8px; }
+.dot span {
+  position: absolute; inset: 0; border-radius: 50%;
+  background: var(--red); animation: ping 1.4s ease-out infinite;
+}
+.dot i { width: 8px; height: 8px; border-radius: 50%; background: var(--red); display: block; }
+
+/* ── EMPTY ────────────────────────────────────────────── */
+.empty { padding: 16px 14px; font-size: 12px; color: var(--muted); }
+
+/* ── AI CARD ──────────────────────────────────────────── */
+.ai-card {
+  background: linear-gradient(135deg, #0d1f40, #0c1628);
+  border: 1px solid #3b7fff33; border-radius: var(--r);
+  padding: 14px 16px; margin-bottom: 12px;
+  animation: fadeUp .3s ease both;
+}
+.ai-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.ai-title { font-size: 11px; font-weight: 800; color: #93c5fd; text-transform: uppercase; letter-spacing: .08em; }
+.btn-ai {
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
+  color: var(--muted); cursor: pointer; padding: 4px 12px;
+  font-size: 11px; font-family: 'Outfit', sans-serif; font-weight: 600;
+  display: flex; align-items: center; gap: 4px; transition: all .2s;
+}
+.btn-ai:active { transform: scale(.95); }
+.ai-text { font-size: 13px; color: #cbd5e1; line-height: 1.75; white-space: pre-wrap; }
+.ai-placeholder { font-size: 12px; color: var(--dim); }
+
+/* ── SPINNER ──────────────────────────────────────────── */
+.spinner {
+  display: inline-block; width: 14px; height: 14px;
+  border: 2px solid var(--border); border-top-color: var(--accent);
+  border-radius: 50%; animation: spin .7s linear infinite; flex-shrink: 0;
+}
+.spinner-lg {
+  width: 32px; height: 32px;
+  border: 3px solid var(--border); border-top-color: var(--accent);
+  border-radius: 50%; animation: spin .8s linear infinite;
+  margin: 0 auto;
+}
+
+/* ── LOADING STATE ────────────────────────────────────── */
+.loading-state { text-align: center; padding: 48px 24px; }
+.loading-state p { font-size: 13px; color: var(--muted); margin-top: 14px; }
+
+/* ── ERROR ────────────────────────────────────────────── */
+.error-box {
+  background: #1a0a0a; border: 1px solid #ef444433;
+  border-radius: var(--r); padding: 14px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px; margin-bottom: 12px; font-size: 12px; color: #f87171;
+}
+.btn-retry {
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
+  color: var(--muted); cursor: pointer; padding: 4px 12px;
+  font-size: 11px; font-family: 'Outfit', sans-serif; font-weight: 600;
+  flex-shrink: 0;
+}
+
+/* ── EMPTY STATE (first load) ─────────────────────────── */
+.hero {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; padding: 48px 24px; text-align: center;
+  animation: fadeUp .5s ease both;
+}
+.hero-icon { font-size: 56px; margin-bottom: 16px; }
+.hero-title { font-size: 22px; font-weight: 800; margin-bottom: 8px; letter-spacing: -.3px; }
+.hero-sub { font-size: 13px; color: var(--muted); line-height: 1.7; margin-bottom: 32px; }
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #fff; border: none; border-radius: var(--r); padding: 14px 36px;
+  font-size: 15px; font-weight: 700; font-family: 'Outfit', sans-serif;
+  cursor: pointer; box-shadow: 0 0 28px #3b7fff33; transition: all .2s;
+}
+.btn-primary:active { transform: scale(.97); }
+
+/* ── BOTTOM SAFE AREA ─────────────────────────────────── */
+.safe-bottom { height: env(safe-area-inset-bottom, 20px); flex-shrink: 0; }
+
+/* ── INSTALL BANNER ───────────────────────────────────── */
+.install-banner {
+  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 100%; max-width: 430px;
+  background: linear-gradient(135deg, #0d1f40, #0c1628);
+  border-top: 1px solid var(--border); padding: 12px 20px 20px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  z-index: 100; animation: fadeUp .4s ease both;
+}
+.install-text { font-size: 12px; color: #93c5fd; font-weight: 600; line-height: 1.4; }
+.install-text span { display: block; font-size: 10px; color: var(--muted); font-weight: 400; margin-top: 2px; }
+.btn-install {
+  background: var(--accent); color: #fff; border: none; border-radius: 10px;
+  padding: 8px 16px; font-size: 12px; font-weight: 700;
+  font-family: 'Outfit', sans-serif; cursor: pointer; flex-shrink: 0;
+}
+.btn-dismiss {
+  background: none; border: none; color: var(--muted); cursor: pointer;
+  font-size: 18px; padding: 4px; flex-shrink: 0;
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="greeting-label" id="greetingLabel">Carregando...</div>
+      <div class="greeting-name" id="greetingName">Marcello</div>
+    </div>
+    <button class="btn-refresh" id="btnRefresh" onclick="loadAll()">
+      <span>🔄</span>
+    </button>
+  </div>
+  <div class="header-date" id="headerDate"></div>
+</div>
+
+<!-- STATS -->
+<div class="stats" id="statsRow" style="display:none">
+  <div class="stat">
+    <div class="stat-icon">🚨</div>
+    <div class="stat-val" id="s-urgent" style="color:#ef4444">—</div>
+    <div class="stat-lbl">Urgente</div>
+  </div>
+  <div class="stat">
+    <div class="stat-icon">📅</div>
+    <div class="stat-val" id="s-events" style="color:#3b7fff">—</div>
+    <div class="stat-lbl">Hoje</div>
+  </div>
+  <div class="stat">
+    <div class="stat-icon">💰</div>
+    <div class="stat-val" id="s-fin" style="color:#10b981">—</div>
+    <div class="stat-lbl">Financ.</div>
+  </div>
+  <div class="stat">
+    <div class="stat-icon">🏫</div>
+    <div class="stat-val" id="s-school" style="color:#f59e0b">—</div>
+    <div class="stat-lbl">Colégio</div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs" id="tabBar" style="display:none">
+  <button class="tab active" onclick="setTab('hoje')">🌅 Hoje</button>
+  <button class="tab" onclick="setTab('urgente')">🚨 Urgente</button>
+  <button class="tab" onclick="setTab('financeiro')">💰 Financeiro</button>
+  <button class="tab" onclick="setTab('agenda')">📅 Agenda</button>
+  <button class="tab" onclick="setTab('colegio')">🏫 Colégio</button>
+  <button class="tab" onclick="setTab('todos')">📧 Emails</button>
+</div>
+
+<!-- CONTENT -->
+<div class="content" id="content">
+  <!-- Hero inicial -->
+  <div class="hero" id="hero">
+    <div class="hero-icon">🚀</div>
+    <div class="hero-title">Seu cockpit pessoal</div>
+    <div class="hero-sub">Gmail, Agenda, Finanças<br/>e Colégio Montreal em um só lugar.</div>
+    <button class="btn-primary" onclick="loadAll()">Carregar meu dia →</button>
+  </div>
+</div>
+
+<div class="safe-bottom"></div>
+
+<!-- INSTALL BANNER -->
+<div class="install-banner" id="installBanner" style="display:none">
+  <div class="install-text">
+    📲 Instalar como app
+    <span>Adicione à tela inicial e use sem navegador</span>
+  </div>
+  <button class="btn-install" id="btnInstall">Instalar</button>
+  <button class="btn-dismiss" onclick="document.getElementById('installBanner').style.display='none'">✕</button>
+</div>
+
+<script>
+// ── CONFIG ──────────────────────────────────────────────
+const GMAIL_MCP    = "https://gmailmcp.googleapis.com/mcp/v1";
+const CALENDAR_MCP = "https://calendarmcp.googleapis.com/mcp/v1";
+const API          = "https://api.anthropic.com/v1/messages";
+const MODEL        = "claude-sonnet-4-20250514";
+
+const SENDERS = [
+  { match:"colegiomontreal", label:"Colégio Montreal", emoji:"🏫", color:"#f59e0b", cat:"escola",     priority:true  },
+  { match:"xpi.com.br",      label:"XP Investimentos", emoji:"📈", color:"#10b981", cat:"financeiro", priority:true  },
+  { match:"c6bank",          label:"C6 Bank",          emoji:"💳", color:"#6366f1", cat:"financeiro", priority:true  },
+  { match:"itaupersonnalite",label:"Itaú Personnalité",emoji:"🏦", color:"#f97316", cat:"financeiro", priority:true  },
+  { match:"santander",       label:"Santander",        emoji:"🏦", color:"#ef4444", cat:"financeiro", priority:true  },
+  { match:"mziq.com",        label:"Vinci Fundos",     emoji:"📊", color:"#8b5cf6", cat:"financeiro", priority:false },
+  { match:"cuoreplatform",   label:"Cuore Platform",   emoji:"📊", color:"#8b5cf6", cat:"financeiro", priority:false },
+  { match:"portoseguro",     label:"Porto Seguro",     emoji:"🛡️",color:"#14b8a6", cat:"outros",     priority:false },
+  { match:"artelecom",       label:"Meganet",          emoji:"🌐", color:"#64748b", cat:"outros",     priority:false },
+  { match:"linkedin",        label:"LinkedIn",         emoji:"💼", color:"#0077b5", cat:"outros",     priority:false },
+  { match:"mobly",           label:"Mobly",            emoji:"🛒", color:"#ec4899", cat:"promo",      priority:false },
+  { match:"sodimac",         label:"Sodimac",          emoji:"🛒", color:"#ec4899", cat:"promo",      priority:false },
+  { match:"eztec",           label:"EZTEC",            emoji:"🏠", color:"#a78bfa", cat:"outros",     priority:false },
+];
+
+const FIN_KEYS = ["xpi","c6bank","itau","santander","wise","pagtech","mziq","cuore","vinci"];
+
+function classify(sender) { return SENDERS.find(s => (sender||"").toLowerCase().includes(s.match)) || null; }
+function isFinancial(s)   { return FIN_KEYS.some(k => (s||"").toLowerCase().includes(k)); }
+function isSchool(s)      { return (s||"").toLowerCase().includes("colegiomontreal"); }
+function isPriority(s)    { const c = classify(s); return c?.priority || false; }
+
+// ── HELPERS ─────────────────────────────────────────────
+function greeting() { const h = new Date().getHours(); return h<12?"Bom dia ☀️":h<18?"Boa tarde 🌤️":"Boa noite 🌙"; }
+function todayFull() { return new Date().toLocaleDateString("pt-BR",{weekday:"long",day:"numeric",month:"long",year:"numeric"}); }
+function todayKey()  { return new Date().toISOString().split("T")[0]; }
+function fmtTime(iso){ return new Date(iso).toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}); }
+function fmtShort(iso){return new Date(iso).toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"}); }
+function ago(iso)    { const h=Math.floor((Date.now()-new Date(iso))/3600000); return h<1?"agora":h<24?h+"h":fmtShort(iso); }
+function cap(s)      { return s.charAt(0).toUpperCase()+s.slice(1); }
+function trunc(s,n)  { return s&&s.length>n?s.slice(0,n)+"…":s||""; }
+function spinner(color="#3b7fff"){ return `<span class="spinner" style="border-top-color:${color}"></span>`; }
+
+// ── STATE ────────────────────────────────────────────────
+let state = { emails:[], events:[], loadingEmails:false, loadingEvents:false, emailError:"", eventError:"", loaded:false, aiText:"", aiLoading:false };
+let currentTab = "hoje";
+
+// ── INIT ─────────────────────────────────────────────────
+document.getElementById("greetingLabel").textContent = greeting();
+document.getElementById("headerDate").textContent    = cap(todayFull());
+
+// ── API CALL ─────────────────────────────────────────────
+async function callClaude(prompt, mcpUrl, mcpName) {
+  const body = { model:MODEL, max_tokens:1000, messages:[{role:"user",content:prompt}] };
+  if (mcpUrl) body.mcp_servers = [{type:"url",url:mcpUrl,name:mcpName}];
+
+  const ctrl  = new AbortController();
+  const timer = setTimeout(()=>ctrl.abort(), 30000);
+  try {
+    const res  = await fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body),signal:ctrl.signal});
+    clearTimeout(timer);
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    const text  = (data.content||[]).find(b=>b.type==="text")?.text||"";
+    const clean = text.replace(/```json|```/g,"").trim();
+    const m     = clean.match(/\[[\s\S]*\]/);
+    if (!m) return typeof clean==="string"?clean:[];
+    return JSON.parse(m[0]);
+  } catch(e) { clearTimeout(timer); throw e; }
+}
+
+// ── LOAD ─────────────────────────────────────────────────
+async function loadEmails() {
+  state.loadingEmails = true; state.emailError = ""; render();
+  try {
+    const r = await callClaude(
+      "Use Gmail search_threads to get 30 most recent threads. Return ONLY raw JSON array, no markdown. Each item: {sender:string,subject:string,date:ISO8601}.",
+      GMAIL_MCP, "gmail"
+    );
+    state.emails = Array.isArray(r) ? r : [];
+  } catch(e) {
+    state.emailError = e.name==="AbortError" ? "Tempo esgotado. Tente novamente." : "Gmail indisponível. Verifique a conexão.";
+  }
+  state.loadingEmails = false; render();
+}
+
+async function loadEvents() {
+  state.loadingEvents = true; state.eventError = ""; render();
+  try {
+    const end = new Date(Date.now()+7*86400000).toISOString();
+    const r   = await callClaude(
+      `Use Google Calendar list_events from now until ${end}. Return ONLY raw JSON array, no markdown. Each item: {summary:string,start:{dateTime?:string,date?:string},location?:string}.`,
+      CALENDAR_MCP, "calendar"
+    );
+    state.events = Array.isArray(r) ? r : [];
+  } catch(e) {
+    state.eventError = "Google Calendar não conectado.";
+  }
+  state.loadingEvents = false; render();
+}
+
+async function loadAll() {
+  state.loaded = true; state.aiText = "";
+  setRefreshLoading(true);
+  await Promise.allSettled([loadEmails(), loadEvents()]);
+  setRefreshLoading(false);
+  updateStats();
+}
+
+async function getAI() {
+  state.aiLoading = true; state.aiText = ""; render();
+  try {
+    const urgent = state.emails.filter(e=>isPriority(e.sender));
+    const school = state.emails.filter(e=>isSchool(e.sender));
+    const fin    = state.emails.filter(e=>isFinancial(e.sender));
+    const evs    = state.events.filter(e=>(e.start?.dateTime||e.start?.date||"").startsWith(todayKey()));
+    const ctx    = [
+      `Emails urgentes: ${urgent.slice(0,5).map(e=>e.subject).join("; ")||"nenhum"}`,
+      `Eventos hoje: ${evs.map(e=>e.summary).join("; ")||"nenhum"}`,
+      `Financeiro: ${fin.slice(0,4).map(e=>e.subject).join("; ")||"nenhum"}`,
+      `Colégio Montreal: ${school.map(e=>e.subject).join("; ")||"nenhum"}`,
+    ].join("\n");
+    const r = await callClaude(`Você é o assistente pessoal do Marcello. Escreva um briefing matinal direto em português, máximo 6 linhas. Destaque urgências e dê uma dica de ação. Use emojis.\n\n${ctx}`);
+    state.aiText = typeof r==="string"?r:JSON.stringify(r);
+  } catch { state.aiText = "Não foi possível gerar o briefing."; }
+  state.aiLoading = false; render();
+}
+
+// ── TABS ─────────────────────────────────────────────────
+function setTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll(".tab").forEach((t,i)=>{
+    const ids = ["hoje","urgente","financeiro","agenda","colegio","todos"];
+    t.classList.toggle("active", ids[i]===tab);
+  });
+  render();
+}
+
+// ── STATS UPDATE ─────────────────────────────────────────
+function updateStats() {
+  const urgent = state.emails.filter(e=>isPriority(e.sender)).length;
+  const evs    = state.events.filter(e=>(e.start?.dateTime||e.start?.date||"").startsWith(todayKey())).length;
+  const fin    = state.emails.filter(e=>isFinancial(e.sender)).length;
+  const school = state.emails.filter(e=>isSchool(e.sender)).length;
+  document.getElementById("s-urgent").textContent = urgent;
+  document.getElementById("s-events").textContent = evs;
+  document.getElementById("s-fin").textContent    = fin;
+  document.getElementById("s-school").textContent = school;
+}
+
+function setRefreshLoading(on) {
+  const btn  = document.getElementById("btnRefresh");
+  const span = btn.querySelector("span");
+  btn.classList.toggle("loading", on);
+  span.textContent = on ? "⌛" : "🔄";
+}
+
+// ── RENDER HELPERS ────────────────────────────────────────
+function emailRow(email, idx) {
+  const cls   = classify(email.sender);
+  const color = cls?.color || "#334155";
+  const emoji = cls?.emoji || "📩";
+  const label = cls?.label || (email.sender||"").split("@")[0] || "—";
+  const urgent = cls?.priority;
+  return `
+    <div class="row" style="animation-delay:${idx*25}ms">
+      <div class="row-icon" style="background:${color}22">${emoji}</div>
+      <div class="row-body">
+        <div class="row-title" style="color:${color}">
+          ${urgent?'<span class="dot"><span></span><i></i></span> ':''}${label}
+        </div>
+        <div class="row-sub">${trunc(email.subject,55)}</div>
+      </div>
+      <div class="row-time">${ago(email.date)}</div>
+    </div>`;
+}
+
+function eventRow(event, idx) {
+  const dt   = event.start?.dateTime||event.start?.date||"";
+  const time = event.start?.dateTime ? fmtTime(dt)+"h" : "dia todo";
+  return `
+    <div class="row" style="animation-delay:${idx*25}ms">
+      <div class="row-icon" style="background:#3b7fff22;font-size:11px;color:#93c5fd;font-weight:700;font-family:'JetBrains Mono',monospace">${time}</div>
+      <div class="row-body">
+        <div class="row-title">${event.summary||"Sem título"}</div>
+        ${event.location?`<div class="row-sub">📍 ${event.location}</div>`:""}
+      </div>
+      <div class="row-time">${fmtShort(dt)}</div>
+    </div>`;
+}
+
+function section(border, headEmoji, headTitle, count, color, rows, loading, error, emptyText, onRetry) {
+  const badge = count!=null ? `<span class="section-badge" style="background:${color}22;color:${color};border:1px solid ${color}44">${count}</span>` : "";
+  let body = "";
+  if (loading) body = `<div style="padding:14px;display:flex;align-items:center;gap:8px"><span class="spinner" style="border-top-color:${color}"></span><span style="font-size:12px;color:var(--muted)">Carregando...</span></div>`;
+  else if (error) body = `<div class="error-box">${error}<button class="btn-retry" onclick="${onRetry}()">Tentar</button></div>`.replace("error-box","empty");
+  else if (!rows.length) body = `<div class="empty">${emptyText}</div>`;
+  else body = rows.join("");
+  return `
+    <div class="section" style="border-color:${border}">
+      <div class="section-head">
+        <span style="font-size:15px">${headEmoji}</span>
+        <span class="section-title">${headTitle}</span>
+        ${badge}
+      </div>
+      ${body}
+    </div>`;
+}
+
+// ── RENDER ────────────────────────────────────────────────
+function render() {
+  const c = document.getElementById("content");
+  const hero = document.getElementById("hero");
+
+  if (!state.loaded) { hero.style.display="flex"; document.getElementById("statsRow").style.display="none"; document.getElementById("tabBar").style.display="none"; return; }
+
+  hero.style.display = "none";
+  document.getElementById("statsRow").style.display = "flex";
+  document.getElementById("tabBar").style.display   = "flex";
+  updateStats();
+
+  const urgent = state.emails.filter(e=>isPriority(e.sender));
+  const fin    = state.emails.filter(e=>isFinancial(e.sender));
+  const school = state.emails.filter(e=>isSchool(e.sender));
+  const evs    = state.events.filter(e=>(e.start?.dateTime||e.start?.date||"").startsWith(todayKey()));
+  const outros = state.emails.filter(e=>!isPriority(e.sender)&&!isFinancial(e.sender)&&!isSchool(e.sender));
+
+  let html = "";
+
+  if (currentTab === "hoje") {
+    // AI Briefing
+    html += `
+      <div class="ai-card">
+        <div class="ai-header">
+          <span class="ai-title">🤖 Briefing do dia</span>
+          <button class="btn-ai" onclick="getAI()" ${state.aiLoading?"disabled":""}>
+            ${state.aiLoading?spinner():"✨"} ${state.aiLoading?"Analisando...":"Gerar"}
+          </button>
+        </div>
+        ${state.aiText
+          ?`<div class="ai-text">${state.aiText}</div>`
+          :`<div class="ai-placeholder">Toque em "Gerar" para seu briefing personalizado com IA.</div>`
+        }
+      </div>`;
+
+    if (state.loadingEmails) html += `<div class="loading-state"><div class="spinner-lg"></div><p>Carregando Gmail...</p></div>`;
+    else if (state.emailError) html += `<div class="error-box">⚠️ ${state.emailError}<button class="btn-retry" onclick="loadEmails()">Tentar</button></div>`;
+    else if (urgent.length) html += section("#ef444422","🚨","Atenção agora",urgent.length,"#ef4444", urgent.slice(0,5).map(emailRow), false,"","","loadEmails");
+
+    if (state.loadingEvents) html += `<div class="loading-state"><div class="spinner-lg"></div><p>Carregando Agenda...</p></div>`;
+    else if (state.eventError) html += section("#3b7fff22","📅","Agenda de hoje",evs.length,"#3b7fff",[],"",state.eventError,"","loadEvents");
+    else html += section("#3b7fff22","📅","Agenda de hoje",evs.length,"#3b7fff", evs.map(eventRow), false,"","Nenhum compromisso hoje 🎉","loadEvents");
+
+    if (!state.loadingEmails && !state.emailError && school.length)
+      html += section("#f59e0b22","🏫","Colégio Montreal",school.length,"#f59e0b", school.slice(0,4).map(emailRow), false,"","Nenhum recado","loadEmails");
+
+    if (!state.loadingEmails && !state.emailError && fin.length)
+      html += section("#10b98122","💰","Financeiro",fin.length,"#10b981", fin.slice(0,3).map(emailRow), false,"","","loadEmails");
+  }
+
+  if (currentTab === "urgente")
+    html += section("#ef444422","🚨","Emails urgentes",urgent.length,"#ef4444", urgent.map(emailRow), state.loadingEmails, state.emailError, "Nenhum email urgente 🎉","loadEmails");
+
+  if (currentTab === "financeiro")
+    html += section("#10b98122","💰","Financeiro",fin.length,"#10b981", fin.map(emailRow), state.loadingEmails, state.emailError, "Nenhum email financeiro recente.","loadEmails");
+
+  if (currentTab === "agenda")
+    html += section("#3b7fff22","📅","Próximos 7 dias",state.events.length,"#3b7fff", state.events.map(eventRow), state.loadingEvents, state.eventError, "Nenhum evento nos próximos 7 dias.","loadEvents");
+
+  if (currentTab === "colegio")
+    html += section("#f59e0b22","🏫","Lorena — Colégio Montreal",school.length,"#f59e0b", school.map(emailRow), state.loadingEmails, state.emailError, "Nenhum recado do colégio.","loadEmails");
+
+  if (currentTab === "todos") {
+    html += section("#3b7fff22","📧","Todos os emails",state.emails.length,"#60a5fa", state.emails.map(emailRow), state.loadingEmails, state.emailError, "Nenhum email carregado.","loadEmails");
+  }
+
+  // Limpa e injeta (preserva hero)
+  const nodes = Array.from(c.childNodes).filter(n=>n.id!=="hero");
+  nodes.forEach(n=>n.remove());
+  const tmp = document.createElement("div");
+  tmp.innerHTML = html;
+  while(tmp.firstChild) c.appendChild(tmp.firstChild);
+}
+
+// ── PWA INSTALL ───────────────────────────────────────────
+let deferredPrompt;
+window.addEventListener("beforeinstallprompt", e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById("installBanner").style.display = "flex";
+});
+document.getElementById("btnInstall").addEventListener("click", async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  document.getElementById("installBanner").style.display = "none";
+});
+window.addEventListener("appinstalled", () => {
+  document.getElementById("installBanner").style.display = "none";
+});
+
+// Render inicial
+render();
+</script>
+
+<!-- SERVICE WORKER inline -->
+<script>
+if ('serviceWorker' in navigator) {
+  const sw = `
+    const CACHE = 'organizer-v1';
+    const ASSETS = ['/'];
+    self.addEventListener('install', e => e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS))));
+    self.addEventListener('fetch', e => {
+      if (e.request.url.includes('api.anthropic') || e.request.url.includes('googleapis')) return;
+      e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)));
+    });
+  `;
+  const blob = new Blob([sw], {type:'application/javascript'});
+  const url  = URL.createObjectURL(blob);
+  navigator.serviceWorker.register(url).catch(()=>{});
+}
+</script>
+
+</body>
+</html>
