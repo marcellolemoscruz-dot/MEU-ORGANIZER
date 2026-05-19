@@ -3,6 +3,7 @@
 ## Identificação profissional
 
 - **Nome**: Marcello Lemos da Cruz
+- **Idade**: 37 anos (em 2026)
 - **Profissão**: Leiloeiro Oficial do Estado de São Paulo
 - **Credencial JUCESP**: nº 0983
 - **Credenciamento adicional**: TJSP (Tribunal de Justiça de São Paulo)
@@ -15,14 +16,49 @@
 - **Nome operacional**: Rico Leilões
 - **Site/plataforma**: ricoleiloes.com.br (plataforma própria, em produção)
 - **Marca pessoal paralela**: marcellolemosleiloeiro.com.br
-- **Estrutura familiar**: esposa também leiloeira (sócia)
+- **Estrutura familiar**: esposa (Natália Gir de Andrade) também leiloeira, cotitular de financiamentos
 
-## Situação financeira pessoal
+## Situação financeira real (atualizado maio 2026)
 
-- **Despesas fixas mensais**: R$ 60–80 mil
-- **Compromissos relevantes**: financiamento residencial (R$ 3.500/mês) + escolas dos filhos (R$ 2.000/mês cada criança)
-- **Renda principal**: do escritório de leilão (cobre despesas)
-- **Capital disponível**: não detalhado (a investigar quando necessário)
+### Renda
+- Renda principal do escritório Rico Leilões
+- **99% da renda vem dessa única fonte** (concentração extrema)
+- Renda atual está **100% comprometida** com obrigações mensais
+- **Previsão de diluição em ~Set 2026** (Empréstimo Itaú #1 termina, libera ~R$ 8k/mês)
+
+### Despesas fixas
+- **R$ 60–80k/mês** em despesas fixas declaradas
+- **R$ 40k/mês** em cartão de crédito (cenário A vs B a confirmar)
+- Financiamento residencial (Casa Indaiatuba): ~R$ 3.500/mês
+- Escolas dos 2 filhos: R$ 2.000/mês cada
+
+### Dívidas ativas (8 mapeadas + cartão)
+
+**Dívidas boas (R$ 860.870 em 4 financiamentos imobiliários — manter)**:
+- Skyline 505 (Itaú): R$ 180.713, CET 12,46% a.a., 204 parcelas restantes
+- Studio 370 Residence (Itaú): R$ 202.013, CET 12,88% a.a., 212 parcelas
+- Casa Indaiatuba (Itaú, com esposa): R$ 320.456, CET 11,84% a.a., 402 parcelas
+- Skyline 506 (Santander, com esposa): R$ 157.688, CET 11,84% a.a., 325 parcelas
+
+**Dívidas caras (R$ 119.545 + cartão — eliminar prioritariamente)**:
+- Empréstimo Itaú #1: R$ 46.563, CET 32,26% a.a., **6 parcelas restantes** (vence ~Set 2026)
+- Empréstimo Itaú #2: R$ 72.982, **CET 54,99% a.a.** (~3,8% a.m. — VILÃO), 36 parcelas
+- Cartão de crédito: R$ 40k/mês de uso (cenário a confirmar)
+
+**Item duvidoso**:
+- PORTO #001080019236: saldo R$ 1.645, CET cadastrado 409.500% (erro provável), 37 parcelas
+
+### Ativos
+- **2 imóveis alugados** rendendo R$ 4k/mês cada (R$ 8k total)
+- Aluguel cobre ~90% da parcela de 1 dos financiamentos
+- **Coleção de diecast**: 600 miniaturas 1:64 + 50 miniaturas 1:18 (hobby, não monetizar)
+- **Plataforma ricoleilões.com.br** (ativo do escritório, em produção)
+- **8 leilões Detran em andamento** = ~R$ 1,4 milhão líquido a receber em 90+ dias
+
+### Transporte
+- Carro próprio quebrado (R$ 15k pra consertar OU vender no estado)
+- Usando Corolla Cross emprestado do sogro
+- **CRÍTICO: NÃO financiar carro novo no momento** — agrava fluxo
 
 ## Interesses pessoais (hobby, NÃO negócio)
 
@@ -45,6 +81,9 @@
 - ❌ Consultoria pura (descartado — "muito amplo, sem rentabilidade real")
 - ❌ Diecast como negócio (descartado — só hobby)
 - ❌ Escalar mais leiloeiros (descartado — quer qualidade, não quantidade)
+- ❌ Streaming / YouTube como diversificação de renda (descartado — ROI/hora insuficiente vs alternativas)
+- ❌ Financiar carro novo no momento (descartado — agrava fluxo)
 - ✅ Expansão na área de leiloeiro (focada em ticket alto + diversificação)
 - ✅ Manter AGS como relação política/amizade (não consolidar nessa plataforma)
 - ✅ Plataforma própria ricoleilões como ativo central
+- ✅ **PRIORIDADE ATUAL: Fase 🔴 Descompressão Financeira** (ver `estrategia-leiloeiro/07-plano-descompressao-financeira.md`)
