@@ -30,41 +30,56 @@ Isso muda o foco: **antes de construir patrimônio passivo, é preciso DESCOMPRI
 
 ## Diagnóstico financeiro real (maio 2026)
 
-### As 8 dívidas mapeadas
+### As 8 dívidas mapeadas (atualizado com dados reais)
 
 | # | Dívida | Banco | Tipo | Saldo | CET a.a. | CET a.m. | Restam | Status |
 |---|---|---|---|---|---|---|---|---|
-| 1 | PORTO #001080019236 | PORTO | ??? | R$ 1.645 | 409.500%* | n/a | 37 parcelas | ⚠️ Provável erro cadastro |
+| 1 | **PORTO #001080019236** | PORTO | CDC com alienação fiduciária do carro | **R$ 32.000** | ~18–22%* | ~1,5–2,0% | 37 parcelas | 🟡 Dívida cara terciária |
 | 2 | Skyline 505 | Itaú | Financ. imóvel | R$ 180.713 | 12,46% | ~1,0% | 204 | 🟢 Boa (alugado) |
-| 3 | Studio 370 Residence | Itaú | Financ. imóvel | R$ 202.013 | 12,88% | ~1,0% | 212 | 🟢 Boa (alugado) |
+| 3 | Studio 370 Residence | Itaú | Financ. imóvel | R$ 202.013 | 12,88% | ~1,0% | 212 | 🟢 Boa (status locação a confirmar) |
 | 4 | Casa Indaiatuba | Itaú | Financ. residência | R$ 320.456 | 11,84% | ~0,9% | 402 | 🟢 Boa (moradia) |
-| 5 | Skyline 506 | Santander | Financ. imóvel | R$ 157.688 | 11,84% | ~0,9% | 325 | 🟢 Boa |
-| 6 | Empréstimo Itaú #1 | Itaú | Pessoal | R$ 46.563 | 32,26% | ~2,4% | **6 parcelas** | 🟡 Acaba ~Ago 2026 |
+| 5 | Skyline 506 | Santander | Financ. imóvel | R$ 157.688 | 11,84% | ~0,9% | 325 | 🟢 Boa (alugado) |
+| 6 | Empréstimo Itaú #1 | Itaú | Pessoal | R$ 46.563 | 32,26% | ~2,4% | **6 parcelas** | 🟡 Acaba ~Set 2026 |
 | 7 | Empréstimo Itaú #2 | Itaú | Pessoal | R$ 72.982 | **54,99%** | **~3,8%** | 36 parcelas | 🔴 **VILÃO** |
-| 8 | Cartão de crédito | varia | Rotativo/parcelado | R$ 40k/mês de uso | varia | varia | — | ⚠️ Cenário a confirmar |
+| 8 | Cartão de crédito | varia | **Cenário A** | R$ 40k/mês de uso | n/a | n/a | — | ✅ Paga 100% no vencimento (custo zero de juros) |
 
-\* PORTO 409.500%: matematicamente impossível em produto financeiro legal. Confirmar se é erro de cadastro, consórcio, ou produto exótico. Saldo baixíssimo (R$ 1,6k) — quitar/cancelar e remover.
+\* PORTO taxa real "baixa" segundo Marcello — provável faixa 18–22% a.a. típica de CDC com garantia veicular. O CET 409.500% que aparecia no PWA era erro de cadastro no programa (campo a corrigir).
+
+### Sobre o PORTO (importante)
+- Empréstimo está **alienado ao carro próprio** (R$ 55k FIPE)
+- Se vender o carro, precisa quitar PORTO no ato
+- Decisão tomada: **consertar carro (R$ 15k)**, não vender (mantém ativo de R$ 55k)
+- Quando PORTO for quitado pela antecipação, carro fica livre (sem alienação)
+
+### Sobre os imóveis alugados (importante)
+- **Skyline 505 + Skyline 506 alugados juntos** pra mesmo inquilino
+- Aluguel: **R$ 4.000/mês total** (R$ 2k cada apartamento)
+- Inquilino paga IPTU + condomínio dos dois
+- Parcelas dos 2 financiamentos somam ~R$ 3.700–4.500/mês
+- **Resultado: break-even** — aluguel ≈ parcelas
+- ⚠️ Verificar mercado: R$ 2k/un parece **abaixo** do mercado Indaiatuba 2026
+- Oportunidade: subir aluguel na próxima renovação (se gap real, +R$ 500–1.000/mês = +R$ 6–12k/ano)
 
 ### Resumo por categoria
 
 **Dívidas boas (R$ 860.870 total)** — 4 financiamentos imobiliários
 - Taxas 11–13% a.a. (mercado padrão)
 - Patrimônio sendo construído
-- **NÃO quitar antecipadamente** — manter prazo longo, aluguel cobre parcelas relevantes
+- **NÃO quitar antecipadamente** — manter prazo longo
 
-**Dívidas caras (R$ 119.545 visível + cartão)** — 2 empréstimos pessoais + cartão
+**Dívidas caras (R$ 152.545 total)** — 3 empréstimos pessoais
 - Itaú #2: ~3,8% a.m. = **R$ 2.770/mês só de juros**
 - Itaú #1: ~2,4% a.m. = **R$ 1.130/mês só de juros**
-- Cartão: depende do uso (cenário A vs B abaixo)
-- **Custo mensal mínimo de juros mortos: R$ 3.900 + cartão**
-- **Custo anual mínimo: R$ 47–120k em juros que não compram patrimônio**
+- PORTO: ~1,5–2% a.m. = **R$ 480–640/mês só de juros**
+- **Custo mensal total de juros mortos: ~R$ 4.380–4.540**
+- **Custo anual: ~R$ 53.000 em juros que não compram patrimônio**
 
-### Cartão de crédito — pendente confirmar
+### Cartão de crédito — confirmado cenário A
 
-- **Cenário A**: R$ 40k/mês usados e pagos 100% no vencimento → custo zero de juros, só orçamento
-- **Cenário B**: parte rotativa/parcelada → custo 12–18% a.m. sobre o saldo → vilão escondido
-
-**AÇÃO**: Marcello confirmar qual cenário aplica.
+- ✅ R$ 40k/mês usados e **pagos 100% no vencimento**
+- Custo zero de juros — apenas operacional/fluxo
+- ⚠️ Risco: renda 100% comprometida — qualquer imprevisto pode jogar pro rotativo (12–18% a.m. = catástrofe)
+- **Por isso a reserva de emergência R$ 80k é peça-chave**: firewall contra rotativo
 
 ### Despesas mensais e fluxo
 
@@ -150,12 +165,14 @@ Marcello tem **5 dívidas com o Itaú** somando R$ 822.728:
 |---|---|---|---|
 | 1 | **Quitar Empréstimo Itaú #2** (R$ 73k a 55% a.a.) | R$ 73.000 | -R$ 2.770/mês de juros |
 | 2 | **Quitar Empréstimo Itaú #1** (R$ 47k a 32% a.a.) | R$ 47.000 | -R$ 1.130/mês de juros |
-| 3 | **Quitar/cancelar PORTO** (R$ 1,6k) | R$ 1.700 | Zera registro duvidoso |
-| 4 | **Reserva de emergência** (6 meses de despesa essencial) | R$ 80.000 | Tranquilidade pros 6m |
-| 5 | **Consertar carro próprio** (NÃO financiar novo) | R$ 15.000 | Resolve transporte sem dívida nova |
+| 3 | **Quitar PORTO** (R$ 32k — libera carro da alienação) | R$ 32.000 | -R$ 600/mês de juros + carro livre |
+| 4 | **Reserva de emergência** (CDB liquidez diária) | R$ 80.000 | Firewall contra rotativo do cartão |
+| 5 | **Consertar carro próprio** (R$ 55k FIPE) | R$ 15.000 | Resolve transporte, mantém ativo |
 | 6 | **Capital de giro pros 8 leilões em andamento** | R$ 150.000 | Folga operacional, não atrasa folha |
-| 7 | **Buffer não tocado** (próximos meses) | R$ 353.000 | Reserva pra dúvidas/cartão se cenário B |
-| | **TOTAL ALOCADO** | **R$ 720.000** | **-R$ 3.900/mês juros economizados** |
+| 7 | **Buffer não tocado** (próximos meses) | R$ 323.000 | Reserva tática |
+| | **TOTAL ALOCADO** | **R$ 720.000** | **-R$ 4.500/mês juros economizados** |
+
+**Economia anual de juros pós-execução: ~R$ 54.000.** Equivale a aumento de renda sem precisar vender mais 1h do tempo de Marcello.
 
 ### Resultado dessa alocação
 

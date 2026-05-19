@@ -35,18 +35,31 @@
 ### Dívidas ativas (8 mapeadas + cartão)
 
 **Dívidas boas (R$ 860.870 em 4 financiamentos imobiliários — manter)**:
-- Skyline 505 (Itaú): R$ 180.713, CET 12,46% a.a., 204 parcelas restantes
-- Studio 370 Residence (Itaú): R$ 202.013, CET 12,88% a.a., 212 parcelas
-- Casa Indaiatuba (Itaú, com esposa): R$ 320.456, CET 11,84% a.a., 402 parcelas
-- Skyline 506 (Santander, com esposa): R$ 157.688, CET 11,84% a.a., 325 parcelas
+- Skyline 505 (Itaú): R$ 180.713, CET 12,46% a.a., 204 parcelas restantes — **alugado**
+- Studio 370 Residence (Itaú): R$ 202.013, CET 12,88% a.a., 212 parcelas — *status a confirmar (alugado/fechado)*
+- Casa Indaiatuba (Itaú, com esposa): R$ 320.456, CET 11,84% a.a., 402 parcelas — **moradia**
+- Skyline 506 (Santander, com esposa): R$ 157.688, CET 11,84% a.a., 325 parcelas — **alugado**
 
-**Dívidas caras (R$ 119.545 + cartão — eliminar prioritariamente)**:
-- Empréstimo Itaú #1: R$ 46.563, CET 32,26% a.a., **6 parcelas restantes** (vence ~Set 2026)
+**Aluguel dos Skylines (505 + 506)**:
+- Inquilino único nos 2 imóveis
+- Aluguel total: **R$ 4.000/mês** (R$ 2.000 cada apartamento)
+- Inquilino paga também: IPTU + condomínio
+- Marcello recebe R$ 4k líquidos
+- Parcelas dos 2 financiamentos somam ~R$ 3.700–4.500/mês
+- **Resultado: break-even (aluguel ≈ parcelas)** — imóveis se autofinanciam, mas não geram fluxo positivo hoje
+- Patrimônio sendo construído via terceiro pagando — em 20–30 anos ficam livres
+- ⚠️ **Verificar se aluguel R$ 2k/un está alinhado com mercado de Indaiatuba 2026** (provavelmente abaixo)
+
+**Dívidas caras (R$ 152.545 + cartão — eliminar prioritariamente)**:
+- Empréstimo Itaú #1: R$ 46.563, CET 32,26% a.a. (~2,4% a.m.), **6 parcelas restantes** (vence ~Set 2026)
 - Empréstimo Itaú #2: R$ 72.982, **CET 54,99% a.a.** (~3,8% a.m. — VILÃO), 36 parcelas
-- Cartão de crédito: R$ 40k/mês de uso (cenário a confirmar)
+- **PORTO #001080019236**: **R$ 32.000**, taxa baixa (~1,5–2% a.m.), 37 parcelas restantes
+  - **Empréstimo com alienação fiduciária do carro próprio** (carro de R$ 55k FIPE é garantia)
+  - Erro de cadastro original no PWA (mostrava CET 409.500% — campo a corrigir)
+- Cartão de crédito: R$ 40k/mês de uso — **cenário A confirmado** (paga 100% no vencimento, custo zero de juros)
 
-**Item duvidoso**:
-- PORTO #001080019236: saldo R$ 1.645, CET cadastrado 409.500% (erro provável), 37 parcelas
+**Custo mensal de juros das 3 dívidas caras**: ~R$ 4.500/mês
+**Custo anual**: ~R$ 54.000 em juros mortos
 
 ### Ativos
 - **2 imóveis alugados** rendendo R$ 4k/mês cada (R$ 8k total)
@@ -56,9 +69,17 @@
 - **8 leilões Detran em andamento** = ~R$ 1,4 milhão líquido a receber em 90+ dias
 
 ### Transporte
-- Carro próprio quebrado (R$ 15k pra consertar OU vender no estado)
-- Usando Corolla Cross emprestado do sogro
+- **Carro próprio: R$ 55k valor FIPE, quebrado, alienado ao PORTO (R$ 32k saldo)**
+- Conserto estimado: R$ 15k
+- **Decisão tomada: CONSERTAR** (R$ 15k vs perder R$ 49k de patrimônio se vender quebrado)
+- Atualmente usando Corolla Cross emprestado do sogro
 - **CRÍTICO: NÃO financiar carro novo no momento** — agrava fluxo
+
+### Investimento pessoal (ativos líquidos)
+- **R$ 16.000 em FIIs variados** — disponível pra liquidar se estratégico
+- Decisão sobre vender: aguardar resposta da antecipação dos leilões
+  - Se antecipação ≤ 30 dias: mantém FII (semente Plano B)
+  - Se antecipação > 60 dias ou negada: vende e abate Itaú #2
 
 ## Interesses pessoais (hobby, NÃO negócio)
 
