@@ -18,6 +18,17 @@
 - **Marca pessoal paralela**: marcellolemosleiloeiro.com.br
 - **Estrutura familiar**: esposa (Natália Gir de Andrade) também leiloeira, cotitular de financiamentos
 
+### Estrutura societária (4 sócios, 2 casais)
+
+```
+Casal Marcello (Marcello + Natália Gir):   50% do escritório (2 partes)
+Casal Sócio (Sócio 3 + Sócio 4):           50% do escritório (2 partes)
+```
+
+- **Distribuição é individualizada**: cada um dos 4 sócios recebe sua parte direto na própria conta quando cada leilão liquida
+- Isso significa que o casal Marcello+Natália pode **antecipar suas 2 partes (50%) independentemente** do outro casal
+- **Outro casal**: sócio detém ~R$ 1.600.000 guardado em reserva (sem urgência de antecipação)
+
 ## Situação financeira real (atualizado maio 2026)
 
 ### Renda
@@ -61,12 +72,60 @@
 **Custo mensal de juros das 3 dívidas caras**: ~R$ 4.500/mês
 **Custo anual**: ~R$ 54.000 em juros mortos
 
-### Ativos
-- **2 imóveis alugados** rendendo R$ 4k/mês cada (R$ 8k total)
-- Aluguel cobre ~90% da parcela de 1 dos financiamentos
+### Ativos imobiliários (detalhe atualizado)
+
+**Skyline 505 + 506 (Edifício Skyline Nova Berrini — Intelligent Business)**
+- **Tipo**: salas COMERCIAIS (não residencial)
+- **Endereço**: Rua da Paz, 1601, Chácara Santo Antônio, São Paulo SP
+- **Metragem**: ~31-32m² cada, **unificadas** em sala única de ~63m²
+- **Locatário**: PJ (empresa)
+- **Aluguel atual**: R$ 4.000/mês total (R$ 63/m²) — inquilino paga IPTU + condomínio
+- **Investimento original (entrada compra)**: ~R$ 100k
+- **Saldo dos financiamentos**: R$ 180k (505 Itaú) + R$ 157k (506 Santander) = R$ 338k
+- **Valor de mercado estimado**: R$ 500-650k (comercial Berrini 2026 a R$ 8-12k/m²)
+- **Patrimônio líquido teórico**: R$ 165-310k
+- **Aluguel justo de mercado 2026**: R$ 5.500-7.500/mês (defasagem R$ 1.500-3.500/mês)
+- ⚠️ **Verificar contrato**: índice de reajuste, última atualização, prazo
+
+**Studio 370 Residence (mesmo prédio, número da unidade)**
+- **Tipo**: HÍBRIDO (Residencial ou Comercial — alugar como residencial é mais procurado)
+- **Metragem**: 26m²
+- **Status atual**: **VAZIO, precisando de reforma** (falta piso e marcenaria)
+- **Saldo do financiamento**: R$ 202k (Itaú, CET 12,88% a.a.)
+- **Custo mensal saindo do bolso (sem aluguel)**: parcela (~R$ 1.800) + IPTU + condomínio = **~R$ 2.500/mês de prejuízo**
+- 🔴 **PRIORIDADE CRÍTICA**: reforma R$ 20-25k + locação = swing de +R$ 3.300/mês
+
+**Casa Indaiatuba**
+- Moradia da família (não rende aluguel)
+- Saldo R$ 320k (Itaú, CET 11,84% a.a.) — 402 parcelas restantes
+
+### Outros ativos
 - **Coleção de diecast**: 600 miniaturas 1:64 + 50 miniaturas 1:18 (hobby, não monetizar)
 - **Plataforma ricoleilões.com.br** (ativo do escritório, em produção)
-- **8 leilões Detran em andamento** = ~R$ 1,4 milhão líquido a receber em 90+ dias
+- **8 leilões Detran em andamento**: ~R$ 1,4M líquido total (escritório) → ~R$ 500k pertencem ao casal Marcello (50%) → ~R$ 290k antecipáveis via banco PJ
+
+### Investimento pessoal — FII portfólio
+
+**Total custo histórico**: R$ 28.400
+**Valor de mercado atual**: R$ 14.209
+**Prejuízo não realizado**: -R$ 14.197 (perda 50% sobre custo)
+
+| FII | Valor atual | Custo | Status |
+|---|---|---|---|
+| HCTR11 | R$ 2.375 | R$ 15.147 | 🔴 -84% (vender — irrecuperável) |
+| MXRF11 | R$ 2.118 | R$ 2.244 | Pequena perda |
+| KNRI11 | R$ 1.897 | R$ 1.876 | Pequeno lucro |
+| XPML11 | R$ 1.704 | R$ 1.687 | Pequeno lucro |
+| HGRE11 | R$ 1.540 | R$ 1.730 | -11% |
+| HGLG11 | R$ 1.232 | R$ 1.312 | -6% |
+| VISC11 | R$ 1.084 | R$ 1.154 | -6% |
+| HGBS11 | R$ 778 | R$ 926 | -16% |
+| BTHF11 | R$ 585 | R$ 883 | -34% |
+| VGIR11 | R$ 476 | R$ 500 | -5% |
+| VINO11 | R$ 358 | R$ 883 | 🔴 -60% (vender) |
+| FLRY3 (ação) | R$ 30 | R$ 42 | Irrelevante |
+
+**Decisão tomada**: vender TUDO e abater Itaú #2. Crédito tributário de ~R$ 14k gerado pelo prejuízo (compensa lucros futuros). Princípio: "FII não é cofrinho — se rende menos que dívida custa, vende."
 
 ### Transporte
 - **Carro próprio: R$ 55k valor FIPE, quebrado, alienado ao PORTO (R$ 32k saldo)**

@@ -95,6 +95,24 @@ Isso muda o foco: **antes de construir patrimônio passivo, é preciso DESCOMPRI
 
 ---
 
+## Estrutura societária e o caminho da antecipação
+
+### Composição
+```
+Casal Marcello (Marcello + Natália): 50% (2 partes)
+Casal Sócio (Sócio 3 + Sócio 4):     50% (2 partes)
+```
+
+### Distribuição é individualizada
+- Cada um dos 4 sócios recebe sua parte direto na própria conta quando cada leilão liquida
+- Casal Marcello pode antecipar suas 2 partes (50%) **sem depender do outro casal**
+- Outro casal não precisa aprovar nem ter ciência da operação familiar
+
+### Situação dos outros sócios
+- Sócio do outro casal: **R$ 1.600.000 guardado em reserva** (sem urgência de antecipação)
+- Cenário B (antecipação coletiva) NÃO faz sentido — outros sócios não vão querer pagar custo financeiro
+- **Cenário A (antecipação familiar isolada) é o caminho viável e definido**
+
 ## Os 8 leilões Detran em andamento (ativo destravável)
 
 ### Estrutura financeira de cada leilão
@@ -107,12 +125,13 @@ Custo operacional: ~30% (variável até fechamento) = R$ 75.000
 Receita LÍQUIDA estimada: ~R$ 175.000 por leilão
 ```
 
-### Pipeline total
+### Pipeline total e distribuição familiar
 
 - **8 leilões em andamento**
-- **Receita líquida estimada total**: ~R$ 1.400.000
+- **Receita líquida estimada total (escritório)**: ~R$ 1.400.000
+- **Após reserva operacional (~R$ 400k)**: ~R$ 1.000.000 distribuível
+- **Parte do casal Marcello (50%)**: **~R$ 500.000**
 - **Prazo de recebimento**: 90+ dias após arrematação
-- **Custo operacional financiado antes**: ~R$ 600.000 em folha de equipe ao longo do ciclo
 - **Caveat**: número de veículos vendidos pode variar — variação típica entre 800–1.100 lotes/leilão
 
 ### Característica importante para antecipação
@@ -123,17 +142,18 @@ A comissão depende do número final de veículos vendidos no leilão — não �
 
 ## Estratégia de antecipação de recebíveis
 
-### Hipóteses de operação
+### Hipóteses de operação (atualizado — apenas parte do casal Marcello)
 
-**Cenário conservador (assumir venda 85% dos lotes)**:
 ```
-Receita esperada conservadora: R$ 1.190.000
-% que banco aceita antecipar: 60–70% (deságio pelo risco)
-Valor antecipável estimado: R$ 715.000–833.000
-Taxa esperada: 2,5–3,5% a.m. (maior pelo risco variável)
-Custo em 90 dias (3% × 3m): R$ 65.000–95.000
-LÍQUIDO ESPERADO NA CONTA: R$ 620.000–740.000
+Comissão estimada do casal Marcello (50%):    R$ 500.000
+% que banco aceita antecipar (deságio):       60–70%
+Valor antecipável:                            R$ 300.000–350.000
+Taxa esperada (banco PJ Itaú):                2,5–3,0% a.m.
+Custo em 90 dias (~3% × 3m):                  R$ 25.000–30.000
+LÍQUIDO ESPERADO NA CONTA FAMILIAR:           R$ 270.000–325.000
 ```
+
+**Trabalhamos com R$ 290.000 como cenário-base** (centro da faixa).
 
 ### Movimento prioritário: banco PJ ANTES de factoring
 
@@ -157,22 +177,55 @@ Marcello tem **5 dívidas com o Itaú** somando R$ 822.728:
 
 ---
 
-## Alocação proposta da antecipação líquida (R$ 720k cenário base)
+## Alocação definitiva (R$ 290k antecipação familiar + R$ 14k FII vendido = R$ 304k total)
 
-### Ordem de alocação (não-negociável)
+### Ordem de execução (definida)
 
-| # | Movimento | Valor | Resultado mensal |
+| # | Movimento | Valor | Resultado mensal recorrente |
 |---|---|---|---|
-| 1 | **Quitar Empréstimo Itaú #2** (R$ 73k a 55% a.a.) | R$ 73.000 | -R$ 2.770/mês de juros |
-| 2 | **Quitar Empréstimo Itaú #1** (R$ 47k a 32% a.a.) | R$ 47.000 | -R$ 1.130/mês de juros |
-| 3 | **Quitar PORTO** (R$ 32k — libera carro da alienação) | R$ 32.000 | -R$ 600/mês de juros + carro livre |
-| 4 | **Reserva de emergência** (CDB liquidez diária) | R$ 80.000 | Firewall contra rotativo do cartão |
-| 5 | **Consertar carro próprio** (R$ 55k FIPE) | R$ 15.000 | Resolve transporte, mantém ativo |
-| 6 | **Capital de giro pros 8 leilões em andamento** | R$ 150.000 | Folga operacional, não atrasa folha |
-| 7 | **Buffer não tocado** (próximos meses) | R$ 323.000 | Reserva tática |
-| | **TOTAL ALOCADO** | **R$ 720.000** | **-R$ 4.500/mês juros economizados** |
+| 1 | **Quitar Empréstimo Itaú #2** (R$ 73k a 55% a.a. — VILÃO) | R$ 73.000 | -R$ 2.770/mês juros |
+| 2 | **Quitar Empréstimo Itaú #1** (R$ 47k a 32% a.a.) | R$ 47.000 | -R$ 1.130/mês juros |
+| 3 | **Quitar PORTO** (R$ 32k — libera carro da alienação fiduciária) | R$ 32.000 | -R$ 600/mês juros |
+| 4 | **Reforma Studio 370** (R$ 20-25k inclui mobília básica) | R$ 25.000 | +R$ 3.300/mês (swing -R$ 2.500 → +R$ 800) |
+| 5 | **Consertar carro próprio** (R$ 55k FIPE mantido) | R$ 15.000 | Resolve transporte sem dívida nova |
+| 6 | **Reserva de emergência** (CDB liquidez diária) | R$ 80.000 | Firewall contra rotativo do cartão |
+| 7 | **Buffer/imprevistos** | R$ 32.000 | Folga tática |
+| | **TOTAL ALOCADO** | **R$ 304.000** | **-R$ 7.800/mês de fluxo recuperado** |
 
-**Economia anual de juros pós-execução: ~R$ 54.000.** Equivale a aumento de renda sem precisar vender mais 1h do tempo de Marcello.
+**Economia anual pós-execução: ~R$ 94.000 de fluxo recuperado** sem precisar trabalhar 1h a mais.
+
+**Composição da economia mensal**:
+- Eliminação de juros caros (Itaú #1 + #2 + PORTO): R$ 4.500
+- Studio 370 swing (parou de sangrar, virou positivo): R$ 3.300
+- **Total: R$ 7.800/mês**
+
+### Sequência de execução em 60-90 dias
+
+**Esta semana (sem custo, sem espera)**:
+- Vender os FIIs (R$ 14k) → abater parcialmente Itaú #2 (saldo cai de R$ 73k para R$ 59k)
+- Pegar 3 orçamentos de reforma do Studio 370
+- Marcar reunião com gerente PJ Itaú pra explorar antecipação familiar (50% das comissões dos 8 leilões)
+
+**Próximos 30 dias**:
+- Negociar antecipação com banco PJ Itaú (cessão fiduciária da comissão familiar)
+- Iniciar reforma Studio 370 com R$ 5k de sinal (capital próprio ou pequena parcela da antecipação)
+
+**Dias 30-60**:
+- Antecipação aprovada e liberada → executar quitações na ordem (Itaú #2 inteiro, Itaú #1 inteiro, PORTO)
+- Conserto do carro (oficina)
+- Constituição da reserva de emergência
+
+**Dias 60-90**:
+- Reforma Studio 370 finalizada
+- Anúncio nas plataformas (Loft, Quinto Andar) — alugar mobiliado residencial
+- Carro próprio funcional novamente
+
+### Negociação adicional possível (custo zero)
+
+**Antes de quitar com a antecipação, ligar no Itaú e dizer**:
+> *"Tenho a quitação pronta pra Itaú #1 e Itaú #2. Pra eu fechar com vocês à vista hoje, quanto vocês reduzem do saldo devedor?"*
+
+Bancos geralmente cedem **5–20% pra fechamento à vista**. Pode render **R$ 6–25k de economia adicional** só com 2 telefonemas.
 
 ### Resultado dessa alocação
 
@@ -232,16 +285,39 @@ Bancos geralmente cedem 5–20% pra fechamento à vista (perdem menos valor pres
 
 A Fase 🔴 Descompressão termina quando, simultaneamente:
 
+- [ ] **FIIs liquidados** (R$ 14k aplicado em Itaú #2)
 - [ ] **Itaú #2 quitado** (vilão eliminado)
-- [ ] **Itaú #1 quitado ou expirando naturalmente** (Set 2026)
-- [ ] **PORTO #001080019236 resolvido** (cancelado ou quitado)
-- [ ] **Cartão de crédito sem saldo rotativo** (uso mensal pago 100%)
-- [ ] **Reserva de emergência ≥ R$ 80k** em conta liquidez (CDB liquidez diária)
-- [ ] **Capital de giro pros leilões** já alocado (R$ 150k+)
-- [ ] **Carro próprio funcional** (consertado, não financiado novo)
-- [ ] **Renda mensal pelo menos 30% descomprometida** vs antes
+- [ ] **Itaú #1 quitado** (não esperar Set 2026 — quita junto)
+- [ ] **PORTO quitado** (carro livre de alienação fiduciária)
+- [ ] **Cartão de crédito**: mantido cenário A (paga 100% no vencimento)
+- [ ] **Studio 370 reformado e ALUGADO** (de -R$ 2,5k para +R$ 800/mês)
+- [ ] **Carro próprio funcionando** (consertado, não financiado novo)
+- [ ] **Reserva de emergência ≥ R$ 80k** em CDB liquidez diária
+- [ ] **Renda mensal ~R$ 7.800 descomprometida** vs antes
 
-Quando todos os 8 itens estiverem ✅, Fase 🟡 Estabilização começa.
+Quando todos os 9 itens estiverem ✅, Fase 🟡 Estabilização começa.
+
+## Alavancas adicionais NÃO consideradas no plano principal (upside)
+
+Estas são oportunidades reais que podem somar fluxo recorrente, mas dependem de execução separada:
+
+### 1. Revisão de aluguel Skyline 505+506 (comercial unificado 63m²)
+- Aluguel atual: R$ 4.000/mês (R$ 63/m²)
+- Valor justo de mercado 2026: R$ 5.500-7.500/mês (R$ 90-120/m²)
+- **Defasagem provável: R$ 1.500-3.500/mês recorrente**
+- **Esforço**: revisar contrato com inquilino PJ, verificar índice de reajuste e última atualização
+- **Ação**: conversa direta com inquilino com dados de mercado em mãos, OU revisão judicial após 3 anos de contrato (Lei 8.245/91 art. 19)
+
+### 2. Crédito tributário pelos FIIs vendidos com prejuízo
+- Prejuízo realizado: ~R$ 14.000
+- Crédito IR (20%): ~R$ 2.800
+- **Compensável em ganhos futuros de FII/ação até esgotar**
+- Reserva pro Plano B (quando voltar a investir em FII com bons fundamentos)
+
+### 3. Negociação de desconto na quitação à vista
+- Bancos cedem 5-20% pra fechamento de empréstimos à vista
+- Economia possível: R$ 6-25k em fechamento de Itaú #1 e #2
+- **Esforço**: 2 telefonemas pro Itaú
 
 ---
 
