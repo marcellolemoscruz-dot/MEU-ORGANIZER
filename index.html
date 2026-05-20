@@ -282,6 +282,189 @@ body {
   background: none; border: none; color: var(--muted); cursor: pointer;
   font-size: 18px; padding: 4px; flex-shrink: 0;
 }
+
+/* ── MACRO TOGGLE (Pessoal/Profissional) ─────────────── */
+.macro-toggle {
+  display: flex; gap: 6px; padding: 10px 20px 4px;
+  background: var(--bg); border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.macro-btn {
+  flex: 1; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);
+  cursor: pointer; font-size: 13px; font-weight: 700; font-family: 'Outfit', sans-serif;
+  background: var(--bg2); color: var(--muted); transition: all .2s;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.macro-btn.active {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #fff; border-color: transparent;
+  box-shadow: 0 0 14px #3b7fff33;
+}
+.macro-btn:active { transform: scale(.97); }
+
+/* ── PRO KPI CARDS ────────────────────────────────────── */
+.pro-kpis {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+  padding: 12px 0; margin-bottom: 12px;
+}
+.pro-kpi {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 12px 14px;
+  display: flex; flex-direction: column; gap: 4px;
+  animation: fadeUp .3s ease both;
+}
+.pro-kpi-label {
+  font-size: 10px; color: var(--muted); text-transform: uppercase;
+  letter-spacing: .07em; font-weight: 600;
+}
+.pro-kpi-val {
+  font-size: 22px; font-weight: 800; line-height: 1.1;
+}
+.pro-kpi-sub {
+  font-size: 10px; color: var(--dim); font-family: 'JetBrains Mono', monospace;
+}
+
+/* ── MINI DASH CARDS ──────────────────────────────────── */
+.mini-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+  margin-bottom: 14px;
+}
+.mini-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 14px;
+  cursor: pointer; transition: all .2s;
+  animation: fadeUp .3s ease both;
+}
+.mini-card:active { transform: scale(.97); }
+.mini-card-icon { font-size: 22px; margin-bottom: 6px; }
+.mini-card-title {
+  font-size: 12px; font-weight: 700; margin-bottom: 2px;
+  color: var(--text);
+}
+.mini-card-sub {
+  font-size: 10px; color: var(--muted);
+}
+.mini-card-badge {
+  display: inline-block; padding: 2px 8px; border-radius: 10px;
+  font-size: 10px; font-weight: 700; margin-top: 6px;
+}
+
+/* ── ADD BUTTON ───────────────────────────────────────── */
+.btn-add {
+  width: 100%; padding: 12px; border-radius: var(--r);
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #fff; border: none; font-size: 13px; font-weight: 700;
+  font-family: 'Outfit', sans-serif; cursor: pointer;
+  margin-bottom: 12px; box-shadow: 0 0 14px #3b7fff33;
+  transition: all .15s;
+}
+.btn-add:active { transform: scale(.97); }
+.btn-add.secondary {
+  background: var(--bg3); color: var(--text); box-shadow: none;
+  border: 1px solid var(--border);
+}
+
+/* ── FORM ─────────────────────────────────────────────── */
+.form-card {
+  background: var(--bg2); border: 1px solid var(--accent);
+  border-radius: var(--r); padding: 14px;
+  margin-bottom: 12px;
+  animation: fadeUp .25s ease both;
+}
+.form-row { margin-bottom: 10px; }
+.form-row label {
+  display: block; font-size: 10px; color: var(--muted);
+  text-transform: uppercase; letter-spacing: .06em;
+  font-weight: 600; margin-bottom: 4px;
+}
+.form-row input, .form-row select, .form-row textarea {
+  width: 100%; padding: 10px 12px;
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: var(--r-sm); color: var(--text);
+  font-family: 'Outfit', sans-serif; font-size: 13px;
+}
+.form-row input:focus, .form-row select:focus, .form-row textarea:focus {
+  outline: none; border-color: var(--accent);
+}
+.form-row textarea { min-height: 80px; resize: vertical; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+.form-actions {
+  display: flex; gap: 8px; margin-top: 12px;
+}
+.form-actions button {
+  flex: 1; padding: 10px; border-radius: var(--r-sm);
+  font-family: 'Outfit', sans-serif; font-size: 12px; font-weight: 700;
+  cursor: pointer; transition: all .15s;
+}
+.form-actions button:active { transform: scale(.97); }
+.btn-save {
+  background: var(--green); color: #fff; border: none;
+}
+.btn-cancel {
+  background: var(--bg3); color: var(--muted); border: 1px solid var(--border);
+}
+
+/* ── LIST ITEM ────────────────────────────────────────── */
+.item {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 12px 14px;
+  margin-bottom: 8px; position: relative;
+  animation: fadeUp .25s ease both;
+}
+.item-head {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  gap: 8px; margin-bottom: 4px;
+}
+.item-title {
+  font-size: 13px; font-weight: 700; color: var(--text); flex: 1;
+}
+.item-meta {
+  font-size: 11px; color: var(--muted); margin-bottom: 6px;
+}
+.item-tags {
+  display: flex; gap: 5px; flex-wrap: wrap;
+}
+.tag {
+  font-size: 9px; font-weight: 700; padding: 3px 7px;
+  border-radius: 8px; text-transform: uppercase; letter-spacing: .05em;
+}
+.tag-frio    { background: #64748b22; color: #94a3b8; }
+.tag-morno   { background: #f59e0b22; color: #fbbf24; }
+.tag-quente  { background: #ef444422; color: #f87171; }
+.tag-proposta{ background: #3b7fff22; color: #60a5fa; }
+.tag-fechado { background: #10b98122; color: #34d399; }
+.tag-aberto  { background: #3b7fff22; color: #60a5fa; }
+.tag-agendado{ background: #f59e0b22; color: #fbbf24; }
+.tag-concluido{ background: #10b98122; color: #34d399; }
+.tag-perdido { background: #64748b22; color: #94a3b8; }
+.btn-del {
+  background: none; border: none; color: var(--dim); cursor: pointer;
+  font-size: 14px; padding: 2px 4px; flex-shrink: 0;
+}
+.btn-del:hover { color: var(--red); }
+
+/* ── TOOL OUTPUT ──────────────────────────────────────── */
+.tool-output {
+  background: var(--bg3); border: 1px solid var(--accent);
+  border-radius: var(--r-sm); padding: 14px;
+  margin-top: 10px; font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; line-height: 1.6; white-space: pre-wrap;
+  color: #cbd5e1; max-height: 360px; overflow-y: auto;
+}
+.btn-copy {
+  background: var(--bg2); color: #93c5fd;
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 6px 12px; font-size: 11px; font-weight: 600;
+  cursor: pointer; margin-top: 8px;
+  font-family: 'Outfit', sans-serif;
+}
+.btn-copy:active { transform: scale(.97); }
+
+/* ── EMPTY PRO ────────────────────────────────────────── */
+.empty-pro {
+  text-align: center; padding: 32px 16px;
+  color: var(--muted); font-size: 12px;
+}
+.empty-pro-icon { font-size: 36px; margin-bottom: 10px; opacity: .4; }
 </style>
 </head>
 <body>
@@ -300,7 +483,13 @@ body {
   <div class="header-date" id="headerDate"></div>
 </div>
 
-<!-- STATS -->
+<!-- MACRO TOGGLE -->
+<div class="macro-toggle" id="macroToggle" style="display:none">
+  <button class="macro-btn active" id="macroPessoal" onclick="setMacro('pessoal')">🏠 Pessoal</button>
+  <button class="macro-btn" id="macroProfissional" onclick="setMacro('profissional')">💼 Profissional</button>
+</div>
+
+<!-- STATS PESSOAIS -->
 <div class="stats" id="statsRow" style="display:none">
   <div class="stat">
     <div class="stat-icon">🚨</div>
@@ -324,7 +513,31 @@ body {
   </div>
 </div>
 
-<!-- TABS -->
+<!-- STATS PROFISSIONAIS -->
+<div class="stats" id="statsRowPro" style="display:none">
+  <div class="stat">
+    <div class="stat-icon">🎯</div>
+    <div class="stat-val" id="s-pipeline" style="color:#7c3aed">—</div>
+    <div class="stat-lbl">Pipeline</div>
+  </div>
+  <div class="stat">
+    <div class="stat-icon">🔨</div>
+    <div class="stat-val" id="s-leiloes" style="color:#3b7fff">—</div>
+    <div class="stat-lbl">Leilões</div>
+  </div>
+  <div class="stat">
+    <div class="stat-icon">📋</div>
+    <div class="stat-val" id="s-editais" style="color:#f59e0b">—</div>
+    <div class="stat-lbl">Editais</div>
+  </div>
+  <div class="stat">
+    <div class="stat-icon">💵</div>
+    <div class="stat-val" id="s-receita" style="color:#10b981">—</div>
+    <div class="stat-lbl">Receita</div>
+  </div>
+</div>
+
+<!-- TABS PESSOAIS -->
 <div class="tabs" id="tabBar" style="display:none">
   <button class="tab active" onclick="setTab('hoje')">🌅 Hoje</button>
   <button class="tab" onclick="setTab('urgente')">🚨 Urgente</button>
@@ -332,6 +545,15 @@ body {
   <button class="tab" onclick="setTab('agenda')">📅 Agenda</button>
   <button class="tab" onclick="setTab('colegio')">🏫 Colégio</button>
   <button class="tab" onclick="setTab('todos')">📧 Emails</button>
+</div>
+
+<!-- TABS PROFISSIONAIS -->
+<div class="tabs" id="tabBarPro" style="display:none">
+  <button class="tab active" onclick="setProTab('visao')">📊 Visão</button>
+  <button class="tab" onclick="setProTab('pipeline')">🎯 Pipeline</button>
+  <button class="tab" onclick="setProTab('leiloes')">🔨 Leilões</button>
+  <button class="tab" onclick="setProTab('editais')">📋 Editais</button>
+  <button class="tab" onclick="setProTab('ferramentas')">🛠️ Ferramentas</button>
 </div>
 
 <!-- CONTENT -->
@@ -566,14 +788,23 @@ function section(border, headEmoji, headTitle, count, color, rows, loading, erro
 
 // ── RENDER ────────────────────────────────────────────────
 function render() {
+  // Se estiver em modo profissional, delega
+  if (typeof currentMacro !== "undefined" && currentMacro === "profissional") {
+    if (typeof renderPro === "function") renderPro();
+    return;
+  }
+
   const c = document.getElementById("content");
   const hero = document.getElementById("hero");
 
   if (!state.loaded) { hero.style.display="flex"; document.getElementById("statsRow").style.display="none"; document.getElementById("tabBar").style.display="none"; return; }
 
   hero.style.display = "none";
-  document.getElementById("statsRow").style.display = "flex";
-  document.getElementById("tabBar").style.display   = "flex";
+  document.getElementById("statsRow").style.display    = "flex";
+  document.getElementById("tabBar").style.display      = "flex";
+  // Garantir que elementos profissionais ficam escondidos no modo pessoal
+  const sp = document.getElementById("statsRowPro");  if (sp) sp.style.display = "none";
+  const tp = document.getElementById("tabBarPro");    if (tp) tp.style.display = "none";
   updateStats();
 
   const urgent = state.emails.filter(e=>isPriority(e.sender));
@@ -656,6 +887,864 @@ document.getElementById("btnInstall").addEventListener("click", async () => {
 window.addEventListener("appinstalled", () => {
   document.getElementById("installBanner").style.display = "none";
 });
+
+// ── PROFISSIONAL: STATE & DATA ───────────────────────────
+let currentMacro = "pessoal";
+let currentProTab = "visao";
+let formState = { open: null, editingId: null };
+
+let business = {
+  pipeline: [],
+  leiloes: [],
+  editais: [],
+  meta_mes_receita: 30000
+};
+
+function loadBusiness() {
+  try {
+    const raw = localStorage.getItem("ricoleiloes-business");
+    if (raw) business = {...business, ...JSON.parse(raw)};
+  } catch(e) {}
+}
+function saveBusiness() {
+  try { localStorage.setItem("ricoleiloes-business", JSON.stringify(business)); } catch(e){}
+}
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
+function fmtBRL(v) {
+  const n = parseFloat(v) || 0;
+  return "R$ " + n.toLocaleString("pt-BR", {minimumFractionDigits:0, maximumFractionDigits:0});
+}
+function fmtBRLshort(v) {
+  const n = parseFloat(v) || 0;
+  if (n >= 1e6) return "R$" + (n/1e6).toFixed(1).replace(/\.0$/,"") + "M";
+  if (n >= 1e3) return "R$" + (n/1e3).toFixed(0) + "k";
+  return "R$" + n.toFixed(0);
+}
+function thisMonth(iso) {
+  if (!iso) return false;
+  const d = new Date(iso); const now = new Date();
+  return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+}
+function esc(s) { return (s||"").toString().replace(/[<>&"]/g, m => ({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[m])); }
+
+// ── MACRO TOGGLE ─────────────────────────────────────────
+function setMacro(macro) {
+  currentMacro = macro;
+  document.getElementById("macroPessoal").classList.toggle("active", macro === "pessoal");
+  document.getElementById("macroProfissional").classList.toggle("active", macro === "profissional");
+
+  document.getElementById("statsRow").style.display     = macro === "pessoal" ? "flex" : "none";
+  document.getElementById("statsRowPro").style.display  = macro === "profissional" ? "flex" : "none";
+  document.getElementById("tabBar").style.display       = macro === "pessoal" ? "flex" : "none";
+  document.getElementById("tabBarPro").style.display    = macro === "profissional" ? "flex" : "none";
+
+  if (macro === "pessoal") {
+    document.getElementById("hero").style.display = state.loaded ? "none" : "flex";
+    render();
+  } else {
+    document.getElementById("hero").style.display = "none";
+    renderPro();
+  }
+}
+
+function setProTab(tab) {
+  currentProTab = tab;
+  document.querySelectorAll("#tabBarPro .tab").forEach((t,i)=>{
+    const ids = ["visao","pipeline","leiloes","editais","ferramentas"];
+    t.classList.toggle("active", ids[i]===tab);
+  });
+  formState = { open: null, editingId: null };
+  renderPro();
+}
+
+// ── PRO STATS ────────────────────────────────────────────
+function updateProStats() {
+  const pipelineAberto = business.pipeline.filter(p => p.status !== "fechado" && p.status !== "perdido").length;
+  const leiloesMes     = business.leiloes.filter(l => thisMonth(l.data)).length;
+  const editaisAtivos  = business.editais.filter(e => e.status === "aberto" || e.status === "monitorando").length;
+  const receita = business.leiloes
+    .filter(l => l.status === "concluido" && thisMonth(l.data))
+    .reduce((s,l) => s + (parseFloat(l.comissao) || 0), 0);
+
+  document.getElementById("s-pipeline").textContent = pipelineAberto || "—";
+  document.getElementById("s-leiloes").textContent  = leiloesMes || "—";
+  document.getElementById("s-editais").textContent  = editaisAtivos || "—";
+  document.getElementById("s-receita").textContent  = receita > 0 ? fmtBRLshort(receita) : "—";
+}
+
+// ── PRO RENDER (dispatcher) ──────────────────────────────
+function renderPro() {
+  updateProStats();
+  const c = document.getElementById("content");
+  let html = "";
+  if (currentProTab === "visao")       html = renderProVisao();
+  if (currentProTab === "pipeline")    html = renderProPipeline();
+  if (currentProTab === "leiloes")     html = renderProLeiloes();
+  if (currentProTab === "editais")     html = renderProEditais();
+  if (currentProTab === "ferramentas") html = renderProFerramentas();
+  const nodes = Array.from(c.childNodes).filter(n=>n.id!=="hero");
+  nodes.forEach(n=>n.remove());
+  const tmp = document.createElement("div");
+  tmp.innerHTML = html;
+  while(tmp.firstChild) c.appendChild(tmp.firstChild);
+}
+
+// ── VIEW: VISÃO MACRO ───────────────────────────────────
+function renderProVisao() {
+  const receitaMes = business.leiloes.filter(l => l.status==="concluido" && thisMonth(l.data))
+                                     .reduce((s,l) => s + (parseFloat(l.comissao) || 0), 0);
+  const metaPct = business.meta_mes_receita > 0 ? Math.min(100, (receitaMes / business.meta_mes_receita) * 100) : 0;
+  const metaColor = metaPct >= 80 ? "#10b981" : metaPct >= 50 ? "#f59e0b" : "#ef4444";
+
+  const pipelineCount = business.pipeline.filter(p => p.status!=="fechado" && p.status!=="perdido").length;
+  const quentes  = business.pipeline.filter(p => p.status==="quente").length;
+  const propostas= business.pipeline.filter(p => p.status==="proposta").length;
+
+  const leiloesAgendados = business.leiloes.filter(l => l.status==="agendado").length;
+  const proximosLeiloes  = business.leiloes
+    .filter(l => l.status==="agendado" && l.data && new Date(l.data) >= new Date(Date.now()-86400000))
+    .sort((a,b) => new Date(a.data) - new Date(b.data))
+    .slice(0, 3);
+
+  const editaisAbertos    = business.editais.filter(e => e.status==="aberto").length;
+  const editaisPrioritarios = business.editais
+    .filter(e => e.status==="aberto" || e.status==="monitorando")
+    .sort((a,b) => new Date(a.prazo || "9999-12-31") - new Date(b.prazo || "9999-12-31"))
+    .slice(0, 3);
+
+  return `
+    <div class="pro-kpis">
+      <div class="pro-kpi">
+        <div class="pro-kpi-label">Meta vs Real</div>
+        <div class="pro-kpi-val" style="color:${metaColor}">${metaPct.toFixed(0)}%</div>
+        <div class="pro-kpi-sub">${fmtBRLshort(receitaMes)} / ${fmtBRLshort(business.meta_mes_receita)}</div>
+      </div>
+      <div class="pro-kpi">
+        <div class="pro-kpi-label">Pipeline ativo</div>
+        <div class="pro-kpi-val" style="color:#7c3aed">${pipelineCount}</div>
+        <div class="pro-kpi-sub">${quentes} quente · ${propostas} proposta</div>
+      </div>
+      <div class="pro-kpi">
+        <div class="pro-kpi-label">Leilões agendados</div>
+        <div class="pro-kpi-val" style="color:#3b7fff">${leiloesAgendados}</div>
+        <div class="pro-kpi-sub">${business.leiloes.filter(l=>thisMonth(l.data)).length} este mês</div>
+      </div>
+      <div class="pro-kpi">
+        <div class="pro-kpi-label">Editais</div>
+        <div class="pro-kpi-val" style="color:#f59e0b">${editaisAbertos}</div>
+        <div class="pro-kpi-sub">${business.editais.filter(e=>e.status==="monitorando").length} monitorando</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head">
+        <span style="font-size:15px">🔨</span>
+        <span class="section-title">Próximos leilões</span>
+        ${proximosLeiloes.length ? `<span class="section-badge" style="background:#3b7fff22;color:#3b7fff;border:1px solid #3b7fff44">${proximosLeiloes.length}</span>` : ""}
+      </div>
+      ${proximosLeiloes.length === 0
+        ? '<div class="empty">Nenhum leilão agendado nos próximos dias.</div>'
+        : proximosLeiloes.map((l,i) => `
+          <div class="row" style="animation-delay:${i*25}ms">
+            <div class="row-icon" style="background:#3b7fff22">📅</div>
+            <div class="row-body">
+              <div class="row-title">${esc(l.descricao || "Leilão")}</div>
+              <div class="row-sub">${esc(l.modalidade || "")}${l.cliente ? " · "+esc(l.cliente) : ""}</div>
+            </div>
+            <div class="row-time">${new Date(l.data).toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"})}</div>
+          </div>`).join("")}
+    </div>
+
+    <div class="section">
+      <div class="section-head">
+        <span style="font-size:15px">📋</span>
+        <span class="section-title">Editais prioritários</span>
+        ${editaisPrioritarios.length ? `<span class="section-badge" style="background:#f59e0b22;color:#f59e0b;border:1px solid #f59e0b44">${editaisPrioritarios.length}</span>` : ""}
+      </div>
+      ${editaisPrioritarios.length === 0
+        ? '<div class="empty">Nenhum edital monitorado. Adicione na aba Editais.</div>'
+        : editaisPrioritarios.map((e,i) => `
+          <div class="row" style="animation-delay:${i*25}ms">
+            <div class="row-icon" style="background:#f59e0b22">📋</div>
+            <div class="row-body">
+              <div class="row-title">${esc(e.orgao || "Edital")}</div>
+              <div class="row-sub">${esc(e.descricao || "")}${e.valor ? " · "+fmtBRLshort(e.valor) : ""}</div>
+            </div>
+            <div class="row-time">${e.prazo ? new Date(e.prazo).toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"}) : "—"}</div>
+          </div>`).join("")}
+    </div>
+
+    <div class="ai-card">
+      <div class="ai-header">
+        <span class="ai-title">📌 PLANO DE 90 DIAS</span>
+      </div>
+      <div class="ai-text">Foco atual:
+🥇 Judicial alto ticket (70% esforço)
+🥈 SaaS Ricoleilões (20%)
+🥉 FII institucional (10% - semear)
+
+Esta semana: cafés com administradores, mapear FII, briefing técnico ricoleilões.
+
+Arquivo completo: <code>estrategia-leiloeiro/05-plano-90-dias.md</code></div>
+    </div>
+  `;
+}
+
+// ── VIEW: PIPELINE ───────────────────────────────────────
+function renderProPipeline() {
+  const items = business.pipeline.slice().sort((a,b) => {
+    const ord = {quente:0, proposta:1, morno:2, frio:3, fechado:4, perdido:5};
+    return (ord[a.status]||9) - (ord[b.status]||9);
+  });
+
+  let html = `<button class="btn-add" onclick="openForm('pipeline')">+ Adicionar prospect</button>`;
+  if (formState.open === "pipeline") html += renderPipelineForm();
+
+  if (items.length === 0 && formState.open !== "pipeline") {
+    html += `<div class="empty-pro">
+      <div class="empty-pro-icon">🎯</div>
+      <div>Nenhum prospect ainda.<br>Adicione administradores judiciais, gestores de FII, advogados.</div>
+    </div>`;
+  } else {
+    html += items.map(p => `
+      <div class="item">
+        <div class="item-head">
+          <div class="item-title">${esc(p.nome)}</div>
+          <button class="btn-del" onclick="delItem('pipeline','${p.id}')">✕</button>
+        </div>
+        <div class="item-meta">${esc(p.empresa || "")}${p.tipo ? " · "+esc(p.tipo) : ""}</div>
+        ${p.contato ? `<div class="item-meta">📧 ${esc(p.contato)}</div>` : ""}
+        ${p.notas ? `<div class="item-meta" style="color:#94a3b8">${esc(p.notas)}</div>` : ""}
+        <div class="item-tags">
+          <span class="tag tag-${p.status}">${p.status}</span>
+          ${p.tipo ? `<span class="tag" style="background:#1a2d4a;color:#94a3b8">${esc(p.tipo)}</span>` : ""}
+        </div>
+      </div>`).join("");
+  }
+
+  return html;
+}
+
+function renderPipelineForm() {
+  return `
+    <div class="form-card">
+      <div class="form-row">
+        <label>Nome do contato</label>
+        <input id="f-nome" placeholder="ex: Dr. João Pantalena" />
+      </div>
+      <div class="form-row">
+        <label>Empresa / Escritório</label>
+        <input id="f-empresa" placeholder="ex: Pantalena Advogados" />
+      </div>
+      <div class="form-row">
+        <label>Tipo</label>
+        <select id="f-tipo">
+          <option>Administrador Judicial</option>
+          <option>Gestor de FII</option>
+          <option>Advogado de Execução</option>
+          <option>Órgão Público</option>
+          <option>Concessionária</option>
+          <option>Outro</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>Contato (email/telefone)</label>
+        <input id="f-contato" placeholder="ex: joao@escritorio.com" />
+      </div>
+      <div class="form-row">
+        <label>Status</label>
+        <select id="f-status">
+          <option value="frio">Frio</option>
+          <option value="morno">Morno</option>
+          <option value="quente">Quente</option>
+          <option value="proposta">Proposta enviada</option>
+          <option value="fechado">Fechado</option>
+          <option value="perdido">Perdido</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>Notas</label>
+        <textarea id="f-notas" placeholder="Última conversa, próximo passo..."></textarea>
+      </div>
+      <div class="form-actions">
+        <button class="btn-cancel" onclick="closeForm()">Cancelar</button>
+        <button class="btn-save" onclick="savePipeline()">Salvar</button>
+      </div>
+    </div>
+  `;
+}
+
+function savePipeline() {
+  const obj = {
+    id: uid(),
+    nome:    document.getElementById("f-nome").value.trim(),
+    empresa: document.getElementById("f-empresa").value.trim(),
+    tipo:    document.getElementById("f-tipo").value,
+    contato: document.getElementById("f-contato").value.trim(),
+    status:  document.getElementById("f-status").value,
+    notas:   document.getElementById("f-notas").value.trim(),
+    criado:  new Date().toISOString()
+  };
+  if (!obj.nome) { alert("Preencha o nome."); return; }
+  business.pipeline.push(obj);
+  saveBusiness();
+  closeForm();
+  renderPro();
+}
+
+// ── VIEW: LEILÕES ────────────────────────────────────────
+function renderProLeiloes() {
+  const items = business.leiloes.slice().sort((a,b) => new Date(b.data || "1970-01-01") - new Date(a.data || "1970-01-01"));
+
+  let html = `<button class="btn-add" onclick="openForm('leiloes')">+ Adicionar leilão</button>`;
+  if (formState.open === "leiloes") html += renderLeiloesForm();
+
+  if (items.length === 0 && formState.open !== "leiloes") {
+    html += `<div class="empty-pro">
+      <div class="empty-pro-icon">🔨</div>
+      <div>Nenhum leilão registrado ainda.</div>
+    </div>`;
+  } else {
+    html += items.map(l => `
+      <div class="item">
+        <div class="item-head">
+          <div class="item-title">${esc(l.descricao || "Leilão")}</div>
+          <button class="btn-del" onclick="delItem('leiloes','${l.id}')">✕</button>
+        </div>
+        <div class="item-meta">${esc(l.modalidade || "")}${l.cliente ? " · "+esc(l.cliente) : ""}</div>
+        <div class="item-meta">📅 ${l.data ? new Date(l.data).toLocaleDateString("pt-BR") : "—"}${l.ticket ? " · Ticket: "+fmtBRLshort(l.ticket) : ""}${l.comissao ? " · Comissão: "+fmtBRL(l.comissao) : ""}</div>
+        <div class="item-tags">
+          <span class="tag tag-${l.status}">${l.status}</span>
+        </div>
+      </div>`).join("");
+  }
+  return html;
+}
+
+function renderLeiloesForm() {
+  const today = new Date().toISOString().split("T")[0];
+  return `
+    <div class="form-card">
+      <div class="form-row">
+        <label>Descrição</label>
+        <input id="f-desc" placeholder="ex: Imóvel comercial Campinas" />
+      </div>
+      <div class="form-row">
+        <label>Modalidade</label>
+        <select id="f-mod">
+          <option>Judicial Cível</option>
+          <option>Judicial Trabalhista</option>
+          <option>Judicial Federal</option>
+          <option>Recuperação Judicial</option>
+          <option>Licitação Pública</option>
+          <option>Particular</option>
+          <option>FII Institucional</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>Cliente / Origem</label>
+        <input id="f-cli" placeholder="ex: Vara Cível Guarulhos / CPTM / Gestora X" />
+      </div>
+      <div class="form-row">
+        <label>Data</label>
+        <input id="f-data" type="date" value="${today}" />
+      </div>
+      <div class="form-row">
+        <label>Ticket estimado (R$)</label>
+        <input id="f-ticket" type="number" placeholder="ex: 2500000" />
+      </div>
+      <div class="form-row">
+        <label>Comissão (R$)</label>
+        <input id="f-com" type="number" placeholder="ex: 125000" />
+      </div>
+      <div class="form-row">
+        <label>Status</label>
+        <select id="f-st">
+          <option value="agendado">Agendado</option>
+          <option value="concluido">Concluído</option>
+          <option value="perdido">Perdido</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <button class="btn-cancel" onclick="closeForm()">Cancelar</button>
+        <button class="btn-save" onclick="saveLeilao()">Salvar</button>
+      </div>
+    </div>
+  `;
+}
+
+function saveLeilao() {
+  const obj = {
+    id: uid(),
+    descricao:  document.getElementById("f-desc").value.trim(),
+    modalidade: document.getElementById("f-mod").value,
+    cliente:    document.getElementById("f-cli").value.trim(),
+    data:       document.getElementById("f-data").value,
+    ticket:     document.getElementById("f-ticket").value,
+    comissao:   document.getElementById("f-com").value,
+    status:     document.getElementById("f-st").value,
+    criado:     new Date().toISOString()
+  };
+  if (!obj.descricao) { alert("Preencha a descrição."); return; }
+  business.leiloes.push(obj);
+  saveBusiness();
+  closeForm();
+  renderPro();
+}
+
+// ── VIEW: EDITAIS ────────────────────────────────────────
+function renderProEditais() {
+  const items = business.editais.slice().sort((a,b) => new Date(a.prazo || "9999-12-31") - new Date(b.prazo || "9999-12-31"));
+
+  let html = `<button class="btn-add" onclick="openForm('editais')">+ Adicionar edital</button>`;
+  if (formState.open === "editais") html += renderEditaisForm();
+
+  if (items.length === 0 && formState.open !== "editais") {
+    html += `<div class="empty-pro">
+      <div class="empty-pro-icon">📋</div>
+      <div>Nenhum edital monitorado.<br>Monitorar em <strong>BEC SP</strong>, <strong>ComprasNet</strong>, <strong>PNCP</strong>.</div>
+    </div>`;
+  } else {
+    html += items.map(e => {
+      const today = new Date(); today.setHours(0,0,0,0);
+      const prazo = e.prazo ? new Date(e.prazo) : null;
+      const dias  = prazo ? Math.ceil((prazo - today) / 86400000) : null;
+      const urgencia = dias !== null ? (dias < 0 ? "expirado" : dias <= 7 ? "urgente" : "ok") : "ok";
+      return `
+        <div class="item">
+          <div class="item-head">
+            <div class="item-title">${esc(e.orgao || "Edital")}</div>
+            <button class="btn-del" onclick="delItem('editais','${e.id}')">✕</button>
+          </div>
+          <div class="item-meta">${esc(e.descricao || "")}</div>
+          <div class="item-meta">${e.valor ? "💰 "+fmtBRLshort(e.valor) : ""}${e.prazo ? " · 📅 "+new Date(e.prazo).toLocaleDateString("pt-BR") : ""}${dias !== null ? ` · ${dias < 0 ? "expirado" : dias+"d"}` : ""}</div>
+          <div class="item-tags">
+            <span class="tag tag-${e.status}">${e.status}</span>
+            ${urgencia === "urgente" ? '<span class="tag" style="background:#ef444422;color:#f87171">⚠ URGENTE</span>' : ""}
+            ${urgencia === "expirado" ? '<span class="tag" style="background:#64748b22;color:#94a3b8">expirado</span>' : ""}
+          </div>
+        </div>`;
+    }).join("");
+  }
+  return html;
+}
+
+function renderEditaisForm() {
+  return `
+    <div class="form-card">
+      <div class="form-row">
+        <label>Órgão</label>
+        <input id="f-org" placeholder="ex: CPTM, Metrô SP, Sabesp" />
+      </div>
+      <div class="form-row">
+        <label>Descrição</label>
+        <input id="f-edesc" placeholder="ex: Leilão de veículos da frota" />
+      </div>
+      <div class="form-row">
+        <label>Valor estimado de contrato (R$)</label>
+        <input id="f-evalor" type="number" placeholder="ex: 200000" />
+      </div>
+      <div class="form-row">
+        <label>Prazo (abertura ou entrega)</label>
+        <input id="f-eprazo" type="date" />
+      </div>
+      <div class="form-row">
+        <label>Portal/origem</label>
+        <input id="f-eorig" placeholder="ex: BEC SP, PNCP, indicação" />
+      </div>
+      <div class="form-row">
+        <label>Status</label>
+        <select id="f-est">
+          <option value="monitorando">Monitorando</option>
+          <option value="aberto">Aberto (propor)</option>
+          <option value="proposta">Proposta enviada</option>
+          <option value="fechado">Ganho</option>
+          <option value="perdido">Perdido</option>
+          <option value="descartado">Descartado</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <button class="btn-cancel" onclick="closeForm()">Cancelar</button>
+        <button class="btn-save" onclick="saveEdital()">Salvar</button>
+      </div>
+    </div>
+  `;
+}
+
+function saveEdital() {
+  const obj = {
+    id:      uid(),
+    orgao:   document.getElementById("f-org").value.trim(),
+    descricao: document.getElementById("f-edesc").value.trim(),
+    valor:   document.getElementById("f-evalor").value,
+    prazo:   document.getElementById("f-eprazo").value,
+    origem:  document.getElementById("f-eorig").value.trim(),
+    status:  document.getElementById("f-est").value,
+    criado:  new Date().toISOString()
+  };
+  if (!obj.orgao) { alert("Preencha o órgão."); return; }
+  business.editais.push(obj);
+  saveBusiness();
+  closeForm();
+  renderPro();
+}
+
+// ── VIEW: FERRAMENTAS ────────────────────────────────────
+function renderProFerramentas() {
+  return `
+    <div class="mini-grid">
+      <div class="mini-card" onclick="openTool('email')">
+        <div class="mini-card-icon">📧</div>
+        <div class="mini-card-title">Gerador de e-mail</div>
+        <div class="mini-card-sub">Pra admin judicial ou FII</div>
+      </div>
+      <div class="mini-card" onclick="openTool('comissao')">
+        <div class="mini-card-icon">💰</div>
+        <div class="mini-card-title">Calc. comissão</div>
+        <div class="mini-card-sub">Estima receita líquida</div>
+      </div>
+      <div class="mini-card" onclick="openTool('viabilidade')">
+        <div class="mini-card-icon">📊</div>
+        <div class="mini-card-title">Avaliar edital</div>
+        <div class="mini-card-sub">Vale a pena participar?</div>
+      </div>
+      <div class="mini-card" onclick="openTool('meta')">
+        <div class="mini-card-icon">🎯</div>
+        <div class="mini-card-title">Meta do mês</div>
+        <div class="mini-card-sub">Atual: ${fmtBRLshort(business.meta_mes_receita)}</div>
+      </div>
+    </div>
+    ${formState.open === "tool-email"      ? renderToolEmail()     : ""}
+    ${formState.open === "tool-comissao"   ? renderToolComissao()  : ""}
+    ${formState.open === "tool-viabilidade"? renderToolViabilidade(): ""}
+    ${formState.open === "tool-meta"       ? renderToolMeta()      : ""}
+  `;
+}
+
+function openTool(name) {
+  formState = { open: "tool-"+name, editingId: null };
+  renderPro();
+}
+
+// ── TOOL: GERADOR DE EMAIL ───────────────────────────────
+function renderToolEmail() {
+  return `
+    <div class="form-card">
+      <div class="form-row">
+        <label>Tipo de destinatário</label>
+        <select id="t-tipo">
+          <option value="admin">Administrador Judicial</option>
+          <option value="fii">Gestor de FII</option>
+          <option value="advogado">Advogado de Execução</option>
+          <option value="orgao">Órgão Público (pré-edital)</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>Nome do contato</label>
+        <input id="t-nome" placeholder="ex: Dr. João Silva" />
+      </div>
+      <div class="form-row">
+        <label>Empresa / Escritório</label>
+        <input id="t-emp" placeholder="ex: Silva Advogados" />
+      </div>
+      <div class="form-row">
+        <label>Contexto específico (opcional)</label>
+        <input id="t-ctx" placeholder="ex: RJ Empresa X / FII Logística" />
+      </div>
+      <div class="form-actions">
+        <button class="btn-cancel" onclick="closeForm()">Fechar</button>
+        <button class="btn-save" onclick="genEmail()">Gerar e-mail</button>
+      </div>
+      <div id="emailOut"></div>
+    </div>
+  `;
+}
+
+function genEmail() {
+  const tipo = document.getElementById("t-tipo").value;
+  const nome = document.getElementById("t-nome").value.trim() || "[Nome]";
+  const emp  = document.getElementById("t-emp").value.trim() || "[Escritório]";
+  const ctx  = document.getElementById("t-ctx").value.trim();
+
+  let assunto, corpo;
+
+  if (tipo === "admin") {
+    assunto = "Apresentação institucional — Rico Leilões (leiloeiro institucional regional)";
+    corpo = `Prezado(a) Dr(a). ${nome},
+
+Sou Marcello Lemos da Cruz, Leiloeiro Oficial credenciado pela JUCESP (registro 0983) e TJSP, com escritório em Indaiatuba (região Campinas).
+
+Acompanho o trabalho do ${emp}${ctx ? " — em particular " + ctx : ""}. Tenho buscado conhecer escritórios de referência em administração judicial em SP, e gostaria de me apresentar enquanto opção para leilão de ativos.
+
+Sobre o Rico Leilões:
+• Plataforma própria de leilão (ricoleiloes.com.br), em produção
+• Equipe com 18 leiloeiros (6 judiciais credenciados ao TJSP)
+• Track record com imóveis de R$ 1 milhão a R$ 11 milhões
+• Cases públicos relevantes: CPTM e Detran SP
+
+Gostaria de propor um café institucional de 30 min, sem pauta de venda, apenas pra me apresentar e entender como o ${emp} estrutura o encaminhamento de leilão de ativos sob sua administração. Pode ser presencial ou online — disponibilidade aberta nas próximas três semanas.
+
+Atenciosamente,
+Marcello Lemos da Cruz
+Leiloeiro Oficial JUCESP 0983
+ricoleiloes.com.br | (11) 4040-8060`;
+  } else if (tipo === "fii") {
+    assunto = "Apresentação institucional — Rico Leilões (leilão de ativos imobiliários)";
+    corpo = `${nome},
+
+Acompanho seu trabalho na ${emp} há alguns meses${ctx ? ", em especial " + ctx : ""}.
+
+Sou Marcello Lemos da Cruz, leiloeiro oficial (JUCESP 0983, TJSP) com plataforma própria em Indaiatuba — operação centralizada na região Campinas/Viracopos. Atuo com judicial e particular, com cases recentes de imóveis até R$ 11 milhões.
+
+A razão do contato: gestoras institucionais tradicionalmente vendem ativos via assessor imobiliário, mas em situações específicas (liquidez rápida, transparência reforçada, ativos distressed ou múltiplos arrematantes potenciais) o leilão público estruturado entrega melhor preço e prazo.
+
+Você teria 30 minutos em alguma janela das próximas semanas para uma conversa institucional curta? Sem pauta de venda — quero entender como a ${emp} estrutura desinvestimento hoje e me apresentar caso isso faça sentido em algum cenário futuro.
+
+Obrigado pela atenção.
+
+Marcello Lemos da Cruz
+Rico Leilões | ricoleiloes.com.br`;
+  } else if (tipo === "advogado") {
+    assunto = "Apresentação institucional — Leiloeiro com plataforma própria";
+    corpo = `Dr(a). ${nome},
+
+Sou Marcello Lemos da Cruz, leiloeiro oficial (JUCESP 0983, TJSP credenciado), com escritório em Indaiatuba e equipe especializada em judicial. Operamos plataforma própria (ricoleiloes.com.br), o que reduz prazo de arrematação e simplifica trabalho de cartório.
+
+Cases recentes: imóveis judiciais até R$ 11 milhões (Vara Cível de Guarulhos), TRT-15${ctx ? ", " + ctx : ""}.
+
+Gostaria de me apresentar e entender se o ${emp} encontra dificuldades em encaminhar bens à arrematação (prazo, comunicação, qualidade de plataforma). Posso passar com material breve ou conversar por 20-30 min em uma janela das próximas semanas.
+
+Atenciosamente,
+Marcello Lemos da Cruz
+Leiloeiro Oficial JUCESP 0983
+ricoleiloes.com.br | (11) 4040-8060`;
+  } else {
+    assunto = "Apresentação institucional — Rico Leilões";
+    corpo = `Prezado(a) ${nome},
+
+Sou Marcello Lemos da Cruz, Leiloeiro Oficial credenciado pela JUCESP (0983) e TJSP. Tomo a liberdade de me apresentar à ${emp}.
+
+Operamos o Rico Leilões (ricoleiloes.com.br), com 18 leiloeiros e plataforma própria. Já atuamos com órgãos públicos relevantes (CPTM, Detran SP) e em leilões judiciais com tickets até R$ 11 milhões.
+
+${ctx ? "Em particular, " + ctx + "\n\n" : ""}Caso a ${emp} tenha previsão de processo licitatório para contratação de leiloeiro nos próximos meses, gostaria de me apresentar previamente — sem pauta de venda, apenas como leiloeiro com capacidade operacional comprovada em SP.
+
+Disponibilidade aberta nas próximas três semanas para uma conversa breve, presencial ou online.
+
+Atenciosamente,
+Marcello Lemos da Cruz
+Leiloeiro Oficial JUCESP 0983
+ricoleiloes.com.br | (11) 4040-8060`;
+  }
+
+  const out = `Assunto: ${assunto}
+
+${corpo}`;
+
+  document.getElementById("emailOut").innerHTML = `
+    <div class="tool-output" id="emailText">${esc(out)}</div>
+    <button class="btn-copy" onclick="copyText('emailText')">📋 Copiar</button>
+  `;
+}
+
+// ── TOOL: CALC COMISSÃO ──────────────────────────────────
+function renderToolComissao() {
+  return `
+    <div class="form-card">
+      <div class="form-row">
+        <label>Ticket estimado do leilão (R$)</label>
+        <input id="c-ticket" type="number" placeholder="ex: 2500000" />
+      </div>
+      <div class="form-row">
+        <label>Modalidade</label>
+        <select id="c-mod">
+          <option data-pct="5">Judicial Cível (5%)</option>
+          <option data-pct="5">Judicial Trabalhista (5%)</option>
+          <option data-pct="5">Judicial Federal (5%)</option>
+          <option data-pct="3">Recuperação Judicial UPI (3%)</option>
+          <option data-pct="5">Licitação Pública (5%)</option>
+          <option data-pct="8">Particular (8%)</option>
+          <option data-pct="1">FII Tijolo (1%)</option>
+          <option data-pct="1.5">FII Recebíveis (1.5%)</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>% comissão a aplicar (sobreescreve se quiser)</label>
+        <input id="c-pct" type="number" step="0.1" placeholder="auto da modalidade" />
+      </div>
+      <div class="form-actions">
+        <button class="btn-cancel" onclick="closeForm()">Fechar</button>
+        <button class="btn-save" onclick="calcComissao()">Calcular</button>
+      </div>
+      <div id="comOut"></div>
+    </div>
+  `;
+}
+
+function calcComissao() {
+  const ticket = parseFloat(document.getElementById("c-ticket").value) || 0;
+  const sel    = document.getElementById("c-mod");
+  const pctDef = parseFloat(sel.options[sel.selectedIndex].dataset.pct);
+  const pctIn  = parseFloat(document.getElementById("c-pct").value);
+  const pct    = !isNaN(pctIn) && pctIn > 0 ? pctIn : pctDef;
+
+  if (ticket <= 0) { alert("Informe o ticket."); return; }
+
+  const bruta    = ticket * (pct / 100);
+  const impostoSimples = bruta * 0.06; // estimativa Simples Anexo III
+  const liquida = bruta - impostoSimples;
+  const margem   = ticket > 0 ? (liquida / ticket * 100) : 0;
+
+  const out = `TICKET DE ARREMATAÇÃO: ${fmtBRL(ticket)}
+MODALIDADE: ${sel.value}
+COMISSÃO APLICADA: ${pct}%
+
+━━━━━━━━━━━━━━━━━━━━━━━━
+RECEITA BRUTA:    ${fmtBRL(bruta)}
+(-) Simples (6%): ${fmtBRL(impostoSimples)}
+━━━━━━━━━━━━━━━━━━━━━━━━
+RECEITA LÍQUIDA:  ${fmtBRL(liquida)}
+
+% líquido sobre ticket: ${margem.toFixed(3)}%
+
+⚠ Estimativa simplificada — não inclui custos
+operacionais variáveis (marketing, vistoria, etc).`;
+
+  document.getElementById("comOut").innerHTML = `
+    <div class="tool-output">${esc(out)}</div>
+  `;
+}
+
+// ── TOOL: AVALIADOR DE EDITAL ────────────────────────────
+function renderToolViabilidade() {
+  return `
+    <div class="form-card">
+      <div class="form-row">
+        <label>Órgão</label>
+        <input id="v-org" placeholder="ex: Prefeitura de X" />
+      </div>
+      <div class="form-row">
+        <label>Valor estimado do contrato (R$/ano)</label>
+        <input id="v-val" type="number" placeholder="ex: 500000" />
+      </div>
+      <div class="form-row">
+        <label>Duração do contrato (meses)</label>
+        <input id="v-dur" type="number" value="12" />
+      </div>
+      <div class="form-row">
+        <label>Horas estimadas dedicadas/mês</label>
+        <input id="v-hr" type="number" placeholder="ex: 40" />
+      </div>
+      <div class="form-row">
+        <label>É alvo prioritário (CPTM, Metrô, Sabesp, CDHU, Receita)?</label>
+        <select id="v-prio">
+          <option value="sim">Sim</option>
+          <option value="nao">Não</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <button class="btn-cancel" onclick="closeForm()">Fechar</button>
+        <button class="btn-save" onclick="calcViabilidade()">Avaliar</button>
+      </div>
+      <div id="viabOut"></div>
+    </div>
+  `;
+}
+
+function calcViabilidade() {
+  const org   = document.getElementById("v-org").value.trim() || "Edital";
+  const val   = parseFloat(document.getElementById("v-val").value) || 0;
+  const dur   = parseFloat(document.getElementById("v-dur").value) || 12;
+  const hrMes = parseFloat(document.getElementById("v-hr").value) || 0;
+  const prio  = document.getElementById("v-prio").value === "sim";
+
+  if (val <= 0 || hrMes <= 0) { alert("Preencha valor e horas."); return; }
+
+  const receitaMensal = val / dur;
+  const receitaPorHora = receitaMensal / hrMes;
+
+  let recomendacao, cor;
+  if (receitaPorHora >= 500 && prio) { recomendacao = "✅ PARTICIPAR — alvo prioritário com retorno alto"; cor = "✅"; }
+  else if (receitaPorHora >= 300)    { recomendacao = "✅ PARTICIPAR — retorno aceitável"; cor = "✅"; }
+  else if (receitaPorHora >= 200)    { recomendacao = "⚠ MARGINAL — só se for proposta técnica forte"; cor = "⚠"; }
+  else                                { recomendacao = "❌ NÃO PARTICIPAR — retorno por hora insuficiente"; cor = "❌"; }
+
+  const out = `ÓRGÃO: ${org}
+VALOR DO CONTRATO: ${fmtBRL(val)} em ${dur} meses
+ALVO PRIORITÁRIO: ${prio ? "Sim" : "Não"}
+
+━━━━━━━━━━━━━━━━━━━━━━━━
+Receita mensal estimada: ${fmtBRL(receitaMensal)}
+Horas/mês dedicadas:     ${hrMes}h
+Receita por hora:        ${fmtBRL(receitaPorHora)}
+━━━━━━━━━━━━━━━━━━━━━━━━
+
+${cor} ${recomendacao}
+
+Referência:
+≥ R$ 500/h + prioritário → PARTICIPAR forte
+R$ 300-500/h → PARTICIPAR
+R$ 200-300/h → marginal, só com diferencial técnico
+< R$ 200/h → NÃO PARTICIPAR`;
+
+  document.getElementById("viabOut").innerHTML = `<div class="tool-output">${esc(out)}</div>`;
+}
+
+// ── TOOL: META MENSAL ────────────────────────────────────
+function renderToolMeta() {
+  return `
+    <div class="form-card">
+      <div class="form-row">
+        <label>Meta de receita líquida do mês (R$)</label>
+        <input id="m-val" type="number" value="${business.meta_mes_receita}" />
+      </div>
+      <div class="form-actions">
+        <button class="btn-cancel" onclick="closeForm()">Cancelar</button>
+        <button class="btn-save" onclick="saveMeta()">Salvar meta</button>
+      </div>
+    </div>
+  `;
+}
+
+function saveMeta() {
+  const v = parseFloat(document.getElementById("m-val").value) || 0;
+  if (v <= 0) { alert("Informe um valor válido."); return; }
+  business.meta_mes_receita = v;
+  saveBusiness();
+  closeForm();
+  renderPro();
+}
+
+// ── FORM CONTROL ─────────────────────────────────────────
+function openForm(type) {
+  formState = { open: type, editingId: null };
+  renderPro();
+}
+function closeForm() {
+  formState = { open: null, editingId: null };
+  renderPro();
+}
+function delItem(type, id) {
+  if (!confirm("Excluir este item?")) return;
+  business[type] = business[type].filter(x => x.id !== id);
+  saveBusiness();
+  renderPro();
+}
+
+// ── COPY UTIL ────────────────────────────────────────────
+function copyText(elId) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  const text = el.textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = event.target.textContent;
+    event.target.textContent = "✓ Copiado!";
+    setTimeout(() => { event.target.textContent = orig; }, 1500);
+  }).catch(() => { alert("Não consegui copiar. Selecione e copie manualmente."); });
+}
+
+// ── BOOTSTRAP PROFISSIONAL ───────────────────────────────
+loadBusiness();
+document.getElementById("macroToggle").style.display = "flex";
 
 // Render inicial
 render();
