@@ -298,6 +298,151 @@ body {
 }
 .task-btn:active { transform: scale(.9); }
 .task-btn.urgent-on { background: #ef444422; border-color: #ef444466; color: var(--red); }
+
+/* ── VOICE FAB ────────────────────────────────────────── */
+.voice-fab {
+  position: fixed; right: 16px;
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  width: 64px; height: 64px; border-radius: 50%; border: none;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #fff; font-size: 26px; cursor: pointer;
+  box-shadow: 0 8px 28px #3b7fff66;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 50; transition: transform .12s;
+}
+.voice-fab:active { transform: scale(.92); }
+.voice-fab.listening {
+  background: linear-gradient(135deg, var(--red), #b91c1c);
+  animation: fabPulseRed 1.4s ease-out infinite;
+}
+.voice-fab.speaking  {
+  background: linear-gradient(135deg, #06b6d4, var(--accent));
+  animation: fabPulseBlue 1.4s ease-out infinite;
+}
+@keyframes fabPulseRed  {
+  0%,100% { box-shadow: 0 8px 28px #ef444466, 0 0 0 0 #ef444466; }
+  50%     { box-shadow: 0 8px 28px #ef444466, 0 0 0 22px #ef444400; }
+}
+@keyframes fabPulseBlue {
+  0%,100% { box-shadow: 0 8px 28px #3b7fff66, 0 0 0 0 #3b7fff66; }
+  50%     { box-shadow: 0 8px 28px #3b7fff66, 0 0 0 22px #3b7fff00; }
+}
+
+/* ── VOICE OVERLAY ────────────────────────────────────── */
+.voice-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  background: radial-gradient(circle at 50% 40%, #0c1a35 0%, #050b18 75%);
+  display: none; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 40px 24px; text-align: center;
+  backdrop-filter: blur(8px);
+  animation: fadeUp .25s ease both;
+}
+.voice-overlay.active { display: flex; }
+.voice-orb {
+  width: 130px; height: 130px; border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #93c5fd, var(--accent) 50%, #1d4ed8);
+  box-shadow: 0 0 60px #3b7fff99, inset 0 0 20px #ffffff33;
+  animation: orbPulse 1.8s ease-in-out infinite;
+  margin-bottom: 28px; position: relative;
+}
+.voice-orb::before, .voice-orb::after {
+  content: ''; position: absolute; inset: -16px;
+  border-radius: 50%; border: 1px solid #3b7fff66;
+  animation: orbRing 2.4s ease-out infinite;
+}
+.voice-orb::after { animation-delay: 1.2s; }
+.voice-overlay[data-mode="thinking"] .voice-orb {
+  background: radial-gradient(circle at 30% 30%, #c4b5fd, var(--accent2) 50%, #4c1d95);
+  box-shadow: 0 0 60px #7c3aedaa, inset 0 0 20px #ffffff33;
+}
+.voice-overlay[data-mode="speaking"] .voice-orb {
+  background: radial-gradient(circle at 30% 30%, #99f6e4, #06b6d4 50%, #155e75);
+  box-shadow: 0 0 60px #06b6d4aa, inset 0 0 20px #ffffff33;
+  animation: orbPulse 0.8s ease-in-out infinite;
+}
+@keyframes orbPulse {
+  0%,100% { transform: scale(1); }
+  50%     { transform: scale(1.07); }
+}
+@keyframes orbRing {
+  0%   { transform: scale(.85); opacity: .8; }
+  100% { transform: scale(1.55); opacity: 0; }
+}
+.voice-label {
+  font-size: 10px; font-weight: 800; letter-spacing: .2em;
+  text-transform: uppercase; color: #93c5fd;
+  margin-bottom: 10px; font-family: 'JetBrains Mono', monospace;
+}
+.voice-transcript {
+  font-size: 22px; font-weight: 600; color: var(--text);
+  line-height: 1.35; max-width: 360px; min-height: 64px;
+  letter-spacing: -.3px;
+}
+.voice-transcript.placeholder { color: var(--muted); font-weight: 400; }
+.voice-hint {
+  font-size: 11px; color: var(--dim);
+  margin-top: 28px; line-height: 1.7; max-width: 320px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.voice-close {
+  position: absolute; top: 20px; right: 20px;
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--bg3); border: 1px solid var(--border);
+  color: var(--text); font-size: 16px; cursor: pointer;
+}
+
+/* ── JUDITE AVATAR STATES (driven by body[data-voice]) ── */
+body[data-voice="listening"] .judite-avatar,
+.judite-avatar.listening {
+  background: radial-gradient(circle at 30% 30%, #fca5a5, var(--red) 60%, #7f1d1d) !important;
+  animation: avatarPulseRed 1s ease-in-out infinite !important;
+}
+body[data-voice="speaking"] .judite-avatar,
+.judite-avatar.speaking {
+  background: radial-gradient(circle at 30% 30%, #99f6e4, #06b6d4 50%, #155e75) !important;
+  animation: avatarPulseFast .55s ease-in-out infinite !important;
+}
+@keyframes avatarPulseRed {
+  0%,100% { box-shadow: 0 0 14px #ef4444aa, inset 0 0 6px #ffffff33; }
+  50%     { box-shadow: 0 0 26px #ef4444ff, inset 0 0 8px #ffffff55; }
+}
+@keyframes avatarPulseFast {
+  0%,100% { box-shadow: 0 0 14px #06b6d4aa, inset 0 0 6px #ffffff33; transform: scale(1); }
+  50%     { box-shadow: 0 0 28px #06b6d4ff, inset 0 0 10px #ffffff77; transform: scale(1.06); }
+}
+.judite-avatar { cursor: pointer; }
+
+/* ── VOICE TOAST ─────────────────────────────────────── */
+.voice-toast {
+  position: fixed; top: 16px; left: 50%;
+  transform: translateX(-50%) translateY(-24px);
+  background: linear-gradient(135deg, #0d1f40, #0c1628);
+  border: 1px solid var(--accent); border-radius: var(--r);
+  padding: 12px 16px; max-width: calc(100% - 32px); width: max-content;
+  font-size: 13px; color: var(--text); font-weight: 500; line-height: 1.4;
+  box-shadow: 0 8px 24px #00000099, 0 0 24px #3b7fff44;
+  opacity: 0; pointer-events: none;
+  transition: all .3s; z-index: 150; text-align: left;
+}
+.voice-toast.active {
+  opacity: 1; transform: translateX(-50%) translateY(0);
+}
+.voice-toast strong {
+  color: #93c5fd; display: block; font-size: 9px; font-weight: 800;
+  letter-spacing: .14em; text-transform: uppercase; margin-bottom: 4px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ── SPEAK BUTTON (inside AI card) ───────────────────── */
+.btn-speak {
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
+  color: var(--muted); cursor: pointer; padding: 4px 10px;
+  font-size: 11px; font-family: 'Outfit', sans-serif; font-weight: 600;
+  margin-left: 8px; transition: all .15s;
+}
+.btn-speak:active { transform: scale(.95); }
+.btn-speak.on { background: var(--accent); color: #fff; border-color: var(--accent); }
 .btn-ai {
   background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
   color: var(--muted); cursor: pointer; padding: 4px 12px;
@@ -451,6 +596,27 @@ body {
 
 <div class="safe-bottom"></div>
 
+<!-- VOICE FAB -->
+<button class="voice-fab" id="voiceFab" onclick="toggleVoice()" aria-label="Falar com a Judite" title="Tocar para falar (ou diga 'Judite, ...')">🎤</button>
+
+<!-- VOICE OVERLAY -->
+<div class="voice-overlay" id="voiceOverlay" data-mode="listening" onclick="overlayTap(event)">
+  <button class="voice-close" onclick="cancelVoice()" aria-label="Fechar">✕</button>
+  <div class="voice-orb"></div>
+  <div class="voice-label" id="voiceLabel">Ouvindo...</div>
+  <div class="voice-transcript placeholder" id="voiceTranscript">Diga alguma coisa, Chefe</div>
+  <div class="voice-hint">
+    Tente: "adicionar tarefa comprar café" · "agenda de hoje"<br/>
+    "fazer briefing" · "que horas são" · "ler emails urgentes"
+  </div>
+</div>
+
+<!-- VOICE TOAST -->
+<div class="voice-toast" id="voiceToast" onclick="this.classList.remove('active')">
+  <strong>Judite diz</strong>
+  <span id="voiceToastText"></span>
+</div>
+
 <!-- INSTALL BANNER -->
 <div class="install-banner" id="installBanner" style="display:none">
   <div class="install-text">
@@ -533,6 +699,303 @@ function deleteTask(id) {
 }
 function handleTaskKey(e) { if (e.key === "Enter") addTask(); }
 loadTasks();
+
+// ── VOICE (Speech Recognition + Synthesis) ──────────────
+const VOICE = {
+  rec: null, voice: null, listening: false, speaking: false,
+  finalText: "", lastResponse: "",
+};
+
+function voiceSupported() { return !!(window.SpeechRecognition || window.webkitSpeechRecognition); }
+
+function voiceInit() {
+  if (VOICE.rec) return true;
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) return false;
+  const r = new SR();
+  r.lang = "pt-BR"; r.continuous = false; r.interimResults = true; r.maxAlternatives = 1;
+  r.onresult = handleVoiceResult;
+  r.onerror  = (e) => { console.warn("voice error", e.error); setVoiceState("idle"); if (e.error==="not-allowed") showToast("Permissão de microfone negada. Verifique nas configurações do navegador."); };
+  r.onend    = () => { if (VOICE.listening) setVoiceState("idle"); };
+  VOICE.rec = r;
+  loadVoiceVoice();
+  return true;
+}
+
+function loadVoiceVoice() {
+  if (!("speechSynthesis" in window)) return;
+  const pick = () => {
+    const vs = speechSynthesis.getVoices();
+    VOICE.voice = vs.find(v=>v.lang==="pt-BR" && /luciana|maria|joana|francisca|female|google/i.test(v.name))
+              || vs.find(v=>v.lang==="pt-BR")
+              || vs.find(v=>v.lang && v.lang.startsWith("pt"))
+              || null;
+  };
+  pick();
+  speechSynthesis.onvoiceschanged = pick;
+}
+
+function speakAs(text) {
+  if (!("speechSynthesis" in window) || !text) return;
+  try { speechSynthesis.cancel(); } catch{}
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "pt-BR";
+  if (VOICE.voice) u.voice = VOICE.voice;
+  u.rate = 1.05; u.pitch = 1.05; u.volume = 1;
+  u.onstart = () => setVoiceState("speaking");
+  u.onend   = () => { if (VOICE.speaking) setVoiceState("idle"); };
+  u.onerror = () => { if (VOICE.speaking) setVoiceState("idle"); };
+  speechSynthesis.speak(u);
+}
+
+function stopSpeaking() {
+  if ("speechSynthesis" in window) { try { speechSynthesis.cancel(); } catch{} }
+  if (VOICE.speaking) setVoiceState("idle");
+}
+
+function setVoiceState(s) {
+  VOICE.listening = (s === "listening");
+  VOICE.speaking  = (s === "speaking");
+  const body = document.body;
+  body.dataset.voice = s === "idle" ? "" : s;
+  const fab = document.getElementById("voiceFab");
+  fab.classList.toggle("listening", s === "listening");
+  fab.classList.toggle("speaking",  s === "speaking");
+  fab.textContent = s === "listening" ? "🛑" : s === "speaking" ? "🔊" : "🎤";
+  const ov = document.getElementById("voiceOverlay");
+  if (s === "listening" || s === "thinking" || s === "speaking") {
+    ov.classList.add("active"); ov.dataset.mode = s;
+    document.getElementById("voiceLabel").textContent =
+      s === "listening" ? "Ouvindo..." : s === "thinking" ? "Pensando..." : "Respondendo...";
+  } else {
+    ov.classList.remove("active");
+  }
+}
+
+function toggleVoice() {
+  if (VOICE.speaking) { stopSpeaking(); return; }
+  if (VOICE.listening) { try { VOICE.rec.stop(); } catch{} setVoiceState("idle"); return; }
+  startVoice();
+}
+
+function startVoice() {
+  if (!voiceInit()) { showToast("Seu navegador não suporta comandos de voz."); return; }
+  stopSpeaking();
+  VOICE.finalText = "";
+  const t = document.getElementById("voiceTranscript");
+  t.textContent = "Diga alguma coisa, Chefe";
+  t.classList.add("placeholder");
+  try { VOICE.rec.start(); setVoiceState("listening"); }
+  catch(e) { console.warn(e); setVoiceState("idle"); }
+}
+
+function cancelVoice() {
+  if (VOICE.listening) { try { VOICE.rec.stop(); } catch{} }
+  stopSpeaking();
+  setVoiceState("idle");
+}
+
+function overlayTap(e) {
+  // Fechar só se clicar no fundo, não no orb/texto
+  if (e.target.id === "voiceOverlay") cancelVoice();
+}
+
+function handleVoiceResult(e) {
+  let interim = "", final = "";
+  for (let i = e.resultIndex; i < e.results.length; i++) {
+    const r = e.results[i];
+    if (r.isFinal) final += r[0].transcript;
+    else interim += r[0].transcript;
+  }
+  const shown = (final || interim).trim();
+  const t = document.getElementById("voiceTranscript");
+  if (shown) { t.textContent = shown; t.classList.remove("placeholder"); }
+  if (final) {
+    VOICE.finalText = final.trim();
+    setVoiceState("thinking");
+    processCommand(VOICE.finalText);
+  }
+}
+
+// ── COMMAND PROCESSOR ───────────────────────────────────
+function norm(s) { return (s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim(); }
+
+async function processCommand(raw) {
+  let cmd = norm(raw).replace(/^(judite|jarvis|j\.?a\.?r\.?v\.?i\.?s\.?)[,\s]*/i, "").replace(/[.!?]+$/,"").trim();
+  if (!cmd) { respond("Não entendi, Chefe. Pode repetir?"); return; }
+
+  let m, resp;
+
+  // ── ADD TASK
+  if (m = cmd.match(/^(adicion(?:ar|e)|anot(?:ar|e|a)|crie?|criar|nov[ao]|lembrar de|lembr(?:ar|e) que|coloca?r?|coloc(?:a|ar)) (?:uma |um |a |o )?(?:tarefa |item |lembrete |compromisso )?(.+)$/)) {
+    const text = capPhrase(m[2]);
+    state.tasks.unshift({ id: Date.now().toString(36)+Math.random().toString(36).slice(2,6), text, urgent:false, done:false, createdAt: new Date().toISOString() });
+    saveTasks(); render();
+    return respond(`Anotado, Chefe. "${text}" entrou na lista.`);
+  }
+
+  // ── MARK DONE
+  if (m = cmd.match(/^(marc(?:ar|a|ou)|conclui(?:r|do|da)?|finaliz(?:ar|ei|ou)|terminei|fiz|feito|completei) (?:a |o )?(?:tarefa )?(.+?)(?: como (feita|conclui(?:da|do)|pronta|done))?$/)) {
+    const needle = norm(m[2]);
+    const t = state.tasks.find(t => !t.done && norm(t.text).includes(needle));
+    if (t) { t.done = true; saveTasks(); render(); return respond(`Feito. "${t.text}" marcada como concluída.`); }
+    return respond(`Não achei nenhuma tarefa parecida com "${m[2]}".`);
+  }
+
+  // ── DELETE TASK
+  if (m = cmd.match(/^(apag(?:ar|a|ue)|exclu(?:ir|a)|remov(?:er|a|e)|delet(?:ar|a|e)|tira(?:r)?) (?:a |o )?(?:tarefa )?(.+)$/)) {
+    const needle = norm(m[2]);
+    const t = state.tasks.find(t => norm(t.text).includes(needle));
+    if (t) { deleteTask(t.id); return respond(`Removida. Apaguei "${t.text}".`); }
+    return respond(`Não encontrei "${m[2]}" na lista.`);
+  }
+
+  // ── MARK URGENT
+  if (m = cmd.match(/^(marc(?:ar|a|ou)|tornar?|deixar?|pôr|por) (?:a |o )?(?:tarefa )?(.+?) (?:como )?urgente?$/)) {
+    const needle = norm(m[2]);
+    const t = state.tasks.find(t => !t.done && norm(t.text).includes(needle));
+    if (t) { t.urgent = true; saveTasks(); render(); return respond(`Ok, "${t.text}" virou urgente.`); }
+    return respond(`Não achei "${m[2]}".`);
+  }
+
+  // ── LIST TASKS
+  if (/^(tarefas?|liste? (as |minhas )?tarefas|me d(iga|ê) (as )?tarefas|quais (as )?tarefas|o que (eu )?tenho (que |pra |para )?fazer|minhas pendencias|pendencias?)/.test(cmd)) {
+    const pend = state.tasks.filter(t=>!t.done);
+    if (!pend.length) return respond("Sua lista está limpa, Chefe. Nenhuma pendência.");
+    if (pend.length === 1) return respond(`Uma tarefa pendente: ${pend[0].text}.`);
+    const top = pend.slice(0,5).map(t=>t.text).join("; ");
+    return respond(`${pend.length} pendentes. As principais: ${top}.`);
+  }
+
+  // ── AGENDA / EVENTS
+  if (/(agenda|compromisso|reuni|evento|horario|programa|cronograma)/.test(cmd)) {
+    const today = /(hoje|de hoje|para hoje)/.test(cmd) || !/(amanha|semana|proxim)/.test(cmd);
+    let evs;
+    if (/amanha/.test(cmd)) {
+      const tk = new Date(Date.now()+86400000).toISOString().split("T")[0];
+      evs = state.events.filter(e=>(e.start?.dateTime||e.start?.date||"").startsWith(tk));
+      if (!evs.length) return respond("Amanhã está livre por enquanto, Chefe.");
+      return respond(`Amanhã você tem ${evs.length}: ${evs.map(e=>`${e.summary}${e.start?.dateTime?" às "+fmtTime(e.start.dateTime):""}`).join("; ")}.`);
+    }
+    evs = state.events.filter(e=>(e.start?.dateTime||e.start?.date||"").startsWith(todayKey()));
+    if (!evs.length) return respond("Sua agenda de hoje está livre.");
+    return respond(`Hoje você tem ${evs.length} compromisso${evs.length>1?"s":""}: ${evs.map(e=>`${e.summary}${e.start?.dateTime?" às "+fmtTime(e.start.dateTime):""}`).join("; ")}.`);
+  }
+
+  // ── NEXT EVENT
+  if (/^(prox(imo)? (compromisso|evento|reuniao)|qual (o |meu )?prox)/.test(cmd)) {
+    const upcoming = state.events
+      .filter(e=>e.start?.dateTime && new Date(e.start.dateTime) > new Date())
+      .sort((a,b)=>new Date(a.start.dateTime)-new Date(b.start.dateTime))[0];
+    if (!upcoming) return respond("Sem compromissos futuros agendados.");
+    return respond(`Próximo: ${upcoming.summary}, ${new Date(upcoming.start.dateTime).toLocaleString("pt-BR",{weekday:"long",hour:"2-digit",minute:"2-digit"})}.`);
+  }
+
+  // ── EMAILS
+  if (/(email|e-mail|inbox|caixa de entrada|mensagem)/.test(cmd)) {
+    if (/(urgent|important|prior)/.test(cmd)) {
+      const u = state.emails.filter(e=>isPriority(e.sender));
+      if (!u.length) return respond("Nada urgente na caixa, Chefe.");
+      return respond(`${u.length} urgente${u.length>1?"s":""}: ${u.slice(0,3).map(e=>{const c=classify(e.sender);return `${c?.label||e.sender} sobre ${e.subject}`}).join("; ")}.`);
+    }
+    if (/(financ|banco|extrato|conta)/.test(cmd)) {
+      const f = state.emails.filter(e=>isFinancial(e.sender));
+      if (!f.length) return respond("Sem novidades financeiras.");
+      return respond(`${f.length} email${f.length>1?"s":""} financeiros recentes: ${f.slice(0,3).map(e=>`${classify(e.sender)?.label||""} ${e.subject}`).join("; ")}.`);
+    }
+    if (/(colegio|escola|montreal|lorena)/.test(cmd)) {
+      const s = state.emails.filter(e=>isSchool(e.sender));
+      if (!s.length) return respond("Nenhum recado do colégio.");
+      return respond(`${s.length} recado${s.length>1?"s":""} do Colégio Montreal: ${s.slice(0,3).map(e=>e.subject).join("; ")}.`);
+    }
+    return respond(`Você tem ${state.emails.length} emails carregados. Posso ler os urgentes, financeiros ou do colégio.`);
+  }
+
+  // ── BRIEFING
+  if (/(briefing|resumo|resumir|me atualize|atualize-me|relatorio|me conte|fala|status|panorama)/.test(cmd)) {
+    respond("Preparando seu briefing, Chefe.");
+    await getAI();
+    if (state.aiText) speakAs(state.aiText.replace(/[^\w\s.,;:!?àáâãäéêíïóôõöúçñÀ-ÿ-]/g," ").replace(/\s+/g," "));
+    return;
+  }
+
+  // ── REFRESH
+  if (/^(atualiz|carrega|recarreg|sincroniz|refresh|busca|busque|verific)/.test(cmd)) {
+    respond("Atualizando seus dados.");
+    await loadAll();
+    return;
+  }
+
+  // ── TIME / DATE
+  if (/(que horas|que hora|hora atual|me diz a hora)/.test(cmd)) {
+    const t = new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+    return respond(`São ${t}, Chefe.`);
+  }
+  if (/(que dia|que data|hoje e dia|qual a data)/.test(cmd)) {
+    return respond(`Hoje é ${todayFull()}.`);
+  }
+
+  // ── GREETING
+  if (/^(ola|oi|opa|e ai|bom dia|boa tarde|boa noite|judite)$/.test(cmd)) {
+    return respond(`${greeting().replace(/[☀️🌤️🌙]/g,"").trim()}, Chefe. Em que posso ajudar?`);
+  }
+
+  // ── THANKS
+  if (/^(obrigad[oa]|valeu|tchau|ate mais|fechou|beleza)/.test(cmd)) {
+    return respond("Sempre às ordens, Chefe.");
+  }
+
+  // ── HELP
+  if (/(ajuda|comandos|o que voce (faz|sabe|pode)|me ensina|opcoes)/.test(cmd)) {
+    return respond("Posso adicionar tarefas, listar agenda, ler emails, gerar briefing, marcar tarefas como feitas, e responder dúvidas. Diga, por exemplo: adicionar tarefa comprar café.");
+  }
+
+  // ── FALLBACK: ask Claude with context
+  try {
+    const answer = await askJudite(raw);
+    return respond(answer);
+  } catch {
+    return respond("Não consegui processar essa, Chefe. Tente reformular.");
+  }
+}
+
+async function askJudite(question) {
+  const pend = state.tasks.filter(t=>!t.done);
+  const evs  = state.events.filter(e=>(e.start?.dateTime||e.start?.date||"").startsWith(todayKey()));
+  const urgent = state.emails.filter(e=>isPriority(e.sender));
+  const ctx = [
+    `Data: ${todayFull()}, ${new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})}`,
+    `Eventos hoje: ${evs.map(e=>e.summary+(e.start?.dateTime?" às "+fmtTime(e.start.dateTime):"")).join("; ")||"nenhum"}`,
+    `Próximos eventos: ${state.events.slice(0,5).map(e=>e.summary).join("; ")||"nenhum"}`,
+    `Tarefas pendentes (${pend.length}): ${pend.slice(0,8).map(t=>t.text).join("; ")||"nenhuma"}`,
+    `Emails urgentes: ${urgent.slice(0,5).map(e=>e.subject).join("; ")||"nenhum"}`,
+  ].join("\n");
+  const r = await callClaude(`Você é a Judite, assistente pessoal do Marcello (Chefe), no estilo Jarvis do Homem de Ferro. Responda em 1-3 frases, em português, voz natural para ser falada (sem emojis, sem markdown, sem listas). Trate-o como "Chefe". Use o contexto quando relevante.\n\nContexto:\n${ctx}\n\nPergunta do Chefe: ${question}`);
+  return typeof r === "string" ? r : (Array.isArray(r) ? JSON.stringify(r) : "Resposta indisponível, Chefe.");
+}
+
+function respond(text) {
+  VOICE.lastResponse = text;
+  const t = document.getElementById("voiceTranscript");
+  t.textContent = text; t.classList.remove("placeholder");
+  showToast(text);
+  speakAs(text);
+  // Auto-fechar overlay 1.5s após começar a fala
+  setTimeout(() => { if (!VOICE.listening) document.getElementById("voiceOverlay").classList.remove("active"); }, 1800);
+}
+
+function showToast(text) {
+  const el = document.getElementById("voiceToast");
+  document.getElementById("voiceToastText").textContent = text;
+  el.classList.add("active");
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(()=> el.classList.remove("active"), 6500);
+}
+
+function capPhrase(s) { s = (s||"").trim(); return s.charAt(0).toUpperCase() + s.slice(1); }
+
+// Preload synthesis voices ASAP (Chrome async load)
+if ("speechSynthesis" in window) { try { speechSynthesis.getVoices(); loadVoiceVoice(); } catch{} }
 
 // ── INIT ─────────────────────────────────────────────────
 document.getElementById("greetingLabel").textContent = greeting();
@@ -745,20 +1208,23 @@ function render() {
     html += `
       <div class="ai-card">
         <div class="ai-header">
-          <div class="judite-identity">
+          <div class="judite-identity" onclick="startVoice()" title="Tocar para falar com a Judite">
             <div class="judite-avatar"></div>
             <div>
               <div class="judite-name">Judite</div>
-              <div class="judite-role">Assistente Pessoal</div>
+              <div class="judite-role">Assistente de Voz</div>
             </div>
           </div>
-          <button class="btn-ai" onclick="getAI()" ${state.aiLoading?"disabled":""}>
-            ${state.aiLoading?spinner():"✨"} ${state.aiLoading?"Pensando...":"Briefing"}
-          </button>
+          <div style="display:flex;gap:6px;align-items:center">
+            ${state.aiText ? `<button class="btn-speak" onclick="speakAs(document.querySelector('.ai-text')?.textContent||'')" title="Ler em voz alta">🔊</button>` : ""}
+            <button class="btn-ai" onclick="getAI()" ${state.aiLoading?"disabled":""}>
+              ${state.aiLoading?spinner():"✨"} ${state.aiLoading?"Pensando...":"Briefing"}
+            </button>
+          </div>
         </div>
         ${state.aiText
           ?`<div class="ai-says">Judite diz</div><div class="ai-text">${state.aiText}</div>`
-          :`<div class="ai-placeholder">Toque em "Briefing" para a Judite resumir o seu dia.</div>`
+          :`<div class="ai-placeholder">Toque o microfone 🎤 e diga "Judite, ..." — ou peça um briefing.</div>`
         }
       </div>`;
 
