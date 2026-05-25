@@ -392,6 +392,30 @@ body {
   color: var(--text); font-size: 16px; cursor: pointer;
 }
 
+/* ── VOICE TEXT INPUT (fallback / file://) ───────────── */
+.voice-input-row {
+  display: flex; gap: 8px; margin-top: 22px;
+  width: 100%; max-width: 380px;
+}
+.voice-input-row input {
+  flex: 1; min-width: 0;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--r-sm); padding: 12px 14px;
+  color: var(--text); font-family: 'Outfit', sans-serif; font-size: 14px;
+  outline: none; transition: border-color .15s;
+}
+.voice-input-row input:focus { border-color: var(--accent); }
+.voice-input-row button {
+  background: var(--accent); border: none; border-radius: var(--r-sm);
+  color: #fff; width: 46px; cursor: pointer; font-size: 18px; font-weight: 700;
+}
+.voice-input-row button:active { transform: scale(.94); }
+.voice-or {
+  font-size: 9px; color: var(--dim); letter-spacing: .2em;
+  text-transform: uppercase; margin-top: 18px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
 /* ── JUDITE AVATAR STATES (driven by body[data-voice]) ── */
 body[data-voice="listening"] .judite-avatar,
 .judite-avatar.listening {
@@ -605,6 +629,11 @@ body[data-voice="speaking"] .judite-avatar,
   <div class="voice-orb"></div>
   <div class="voice-label" id="voiceLabel">Ouvindo...</div>
   <div class="voice-transcript placeholder" id="voiceTranscript">Diga alguma coisa, Chefe</div>
+  <div class="voice-or">ou digite</div>
+  <div class="voice-input-row">
+    <input id="voiceTextInput" placeholder="Digite um comando..." onkeydown="handleVoiceTextKey(event)" autocomplete="off" />
+    <button onclick="submitVoiceText()" aria-label="Enviar">→</button>
+  </div>
   <div class="voice-hint">
     Tente: "adicionar tarefa comprar café" · "agenda de hoje"<br/>
     "fazer briefing" · "que horas são" · "ler emails urgentes"
@@ -773,20 +802,56 @@ function setVoiceState(s) {
 }
 
 function toggleVoice() {
-  if (VOICE.speaking) { stopSpeaking(); return; }
+  if (VOICE.speaking)  { stopSpeaking(); return; }
   if (VOICE.listening) { try { VOICE.rec.stop(); } catch{} setVoiceState("idle"); return; }
   startVoice();
 }
 
+function openConsole() {
+  // Abre o overlay mesmo sem suporte a voz — permite digitar comandos
+  stopSpeaking();
+  const ov = document.getElementById("voiceOverlay");
+  ov.classList.add("active"); ov.dataset.mode = "listening";
+  const t = document.getElementById("voiceTranscript");
+  t.textContent = "Diga ou digite, Chefe";
+  t.classList.add("placeholder");
+  document.getElementById("voiceLabel").textContent = voiceSupported() ? "Pronta" : "Modo texto";
+  setTimeout(()=>document.getElementById("voiceTextInput")?.focus(), 50);
+}
+
 function startVoice() {
-  if (!voiceInit()) { showToast("Seu navegador não suporta comandos de voz."); return; }
+  if (!voiceInit()) {
+    // Sem reconhecimento: abre só o modo texto
+    showToast("Reconhecimento de voz indisponível aqui — use o campo de texto.");
+    openConsole();
+    return;
+  }
   stopSpeaking();
   VOICE.finalText = "";
   const t = document.getElementById("voiceTranscript");
   t.textContent = "Diga alguma coisa, Chefe";
   t.classList.add("placeholder");
   try { VOICE.rec.start(); setVoiceState("listening"); }
-  catch(e) { console.warn(e); setVoiceState("idle"); }
+  catch(e) {
+    console.warn(e);
+    // Em file:// ou sem permissão, cai pro modo texto
+    openConsole();
+  }
+}
+
+function handleVoiceTextKey(e) { if (e.key === "Enter") submitVoiceText(); }
+
+function submitVoiceText() {
+  const input = document.getElementById("voiceTextInput");
+  const text  = (input?.value||"").trim();
+  if (!text) return;
+  input.value = "";
+  // Se estiver ouvindo, para o mic — vamos usar o texto
+  if (VOICE.listening) { try { VOICE.rec.stop(); } catch{} }
+  const t = document.getElementById("voiceTranscript");
+  t.textContent = text; t.classList.remove("placeholder");
+  setVoiceState("thinking");
+  processCommand(text);
 }
 
 function cancelVoice() {
@@ -980,8 +1045,12 @@ function respond(text) {
   t.textContent = text; t.classList.remove("placeholder");
   showToast(text);
   speakAs(text);
-  // Auto-fechar overlay 1.5s após começar a fala
-  setTimeout(() => { if (!VOICE.listening) document.getElementById("voiceOverlay").classList.remove("active"); }, 1800);
+  // Auto-fechar overlay 1.8s após responder (a menos que esteja escutando ou digitando)
+  setTimeout(() => {
+    if (!VOICE.listening && document.activeElement?.id !== "voiceTextInput") {
+      document.getElementById("voiceOverlay").classList.remove("active");
+    }
+  }, 1800);
 }
 
 function showToast(text) {
