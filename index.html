@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="Organizer"/>
-<meta name="description" content="Personal Organizer — Marcello"/>
+<meta name="description" content="Assistente pessoal por voz"/>
 <title>Judite — Personal Organizer</title>
 
 <!-- PWA Manifest inline -->
@@ -458,6 +458,62 @@ body[data-voice="speaking"] .judite-avatar,
   font-family: 'JetBrains Mono', monospace;
 }
 
+/* ── SETTINGS MODAL ──────────────────────────────────── */
+.btn-settings {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--bg3); border: 1px solid var(--border);
+  color: var(--text); font-size: 16px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  margin-left: 8px; flex-shrink: 0; transition: transform .15s;
+}
+.btn-settings:active { transform: rotate(45deg) scale(.92); }
+
+.settings-modal {
+  position: fixed; inset: 0; z-index: 250;
+  background: rgba(5,11,24,.78); backdrop-filter: blur(6px);
+  display: none; align-items: center; justify-content: center;
+  padding: 20px;
+}
+.settings-modal.active { display: flex; animation: fadeUp .25s ease both; }
+.settings-card {
+  background: linear-gradient(135deg, #0d1f40, #0c1628);
+  border: 1px solid var(--accent); border-radius: var(--r);
+  padding: 22px 22px 18px;
+  width: 100%; max-width: 380px;
+  box-shadow: 0 24px 60px #00000099, 0 0 40px #3b7fff44;
+}
+.settings-title {
+  font-size: 11px; font-weight: 800; color: #93c5fd;
+  letter-spacing: .14em; text-transform: uppercase;
+  margin-bottom: 4px; font-family: 'JetBrains Mono', monospace;
+}
+.settings-subtitle { font-size: 12px; color: var(--muted); margin-bottom: 18px; line-height: 1.5; }
+.settings-field { margin-bottom: 14px; }
+.settings-label {
+  display: block; font-size: 10px; font-weight: 700;
+  color: var(--muted); margin-bottom: 6px;
+  text-transform: uppercase; letter-spacing: .1em;
+}
+.settings-input {
+  width: 100%; background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--r-sm); padding: 11px 14px;
+  color: var(--text); font-family: 'Outfit', sans-serif; font-size: 14px;
+  outline: none; transition: border-color .15s;
+}
+.settings-input:focus { border-color: var(--accent); }
+.settings-hint { font-size: 10px; color: var(--dim); margin-top: 4px; }
+.settings-actions { display: flex; gap: 8px; margin-top: 20px; }
+.settings-actions button {
+  flex: 1; border-radius: var(--r-sm); border: none;
+  padding: 11px 12px; font-family: 'Outfit', sans-serif;
+  font-weight: 700; font-size: 13px; cursor: pointer;
+  transition: transform .12s;
+}
+.settings-actions button:active { transform: scale(.96); }
+.btn-cancel { background: var(--bg3); color: var(--muted); border: 1px solid var(--border) !important; }
+.btn-save   { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; }
+.btn-reset  { background: transparent; color: var(--red); border: 1px solid #ef444433 !important; }
+
 /* ── SPEAK BUTTON (inside AI card) ───────────────────── */
 .btn-speak {
   background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
@@ -559,9 +615,12 @@ body[data-voice="speaking"] .judite-avatar,
       <div class="greeting-label" id="greetingLabel">Carregando...</div>
       <div class="greeting-name" id="greetingName">Marcello</div>
     </div>
-    <button class="btn-refresh" id="btnRefresh" onclick="loadAll()">
-      <span>🔄</span>
-    </button>
+    <div style="display:flex;gap:6px;align-items:center;flex-shrink:0">
+      <button class="btn-settings" onclick="openSettings()" aria-label="Configurações" title="Configurações">⚙️</button>
+      <button class="btn-refresh" id="btnRefresh" onclick="loadAll()">
+        <span>🔄</span>
+      </button>
+    </div>
   </div>
   <div class="header-date" id="headerDate"></div>
   <div style="margin-top:8px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;position:relative;z-index:1">
@@ -641,6 +700,38 @@ body[data-voice="speaking"] .judite-avatar,
   <div class="voice-hint">
     "marcar reunião amanhã 14h" · "agenda de hoje"<br/>
     "adicionar tarefa X" · "lembre que ..." · "ativar lembretes"
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="settings-modal" id="settingsModal" onclick="if(event.target.id==='settingsModal')closeSettings()">
+  <div class="settings-card">
+    <div class="settings-title">⚙️ Configurações</div>
+    <div class="settings-subtitle">Personalize quem usa o app e o nome da assistente. Salvo só neste dispositivo.</div>
+
+    <div class="settings-field">
+      <label class="settings-label">Seu nome</label>
+      <input id="setName" class="settings-input" placeholder="Cláudio" maxlength="40" />
+      <div class="settings-hint">Aparece na saudação ("Bom dia, Cláudio")</div>
+    </div>
+
+    <div class="settings-field">
+      <label class="settings-label">Nome da assistente</label>
+      <input id="setAssistant" class="settings-input" placeholder="Judite" maxlength="40" />
+      <div class="settings-hint">Use esse nome pra chamar ela: "{nome}, agenda de hoje"</div>
+    </div>
+
+    <div class="settings-field">
+      <label class="settings-label">Como ela te chama</label>
+      <input id="setAddress" class="settings-input" placeholder="Chefe" maxlength="40" />
+      <div class="settings-hint">Ex: Chefe, Chefa, Cláudio, amor</div>
+    </div>
+
+    <div class="settings-actions">
+      <button class="btn-cancel" onclick="closeSettings()">Cancelar</button>
+      <button class="btn-save" onclick="saveSettings()">Salvar</button>
+    </div>
+    <div style="margin-top:10px"><button class="btn-reset" onclick="resetSettings()" style="width:100%;padding:8px;font-size:11px">Restaurar padrão</button></div>
   </div>
 </div>
 
@@ -784,6 +875,70 @@ function addMemFromInput() {
 }
 loadMemory();
 
+// ── PROFILE (user/assistant names) ──────────────────────
+const PROFILE_KEY = "judite_profile_v1";
+const PROFILE_DEFAULTS = { userName: "Marcello", assistantName: "Judite", userAddress: "Chefe" };
+let profile = { ...PROFILE_DEFAULTS };
+
+function loadProfile() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(PROFILE_KEY)||"{}");
+    profile = { ...PROFILE_DEFAULTS, ...stored };
+  } catch { profile = { ...PROFILE_DEFAULTS }; }
+}
+function saveProfile() { localStorage.setItem(PROFILE_KEY, JSON.stringify(profile)); }
+
+function escapeRegex(s) { return (s||"").replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+function wakeRegex() {
+  const a = escapeRegex(norm(profile.assistantName||"judite"));
+  return new RegExp(`^(${a}|jarvis|j\\.?a\\.?r\\.?v\\.?i\\.?s\\.?)[,\\s]*`, "i");
+}
+
+function applyProfileToUI() {
+  document.title = `${profile.assistantName} — Personal Organizer`;
+  const greet = document.getElementById("greetingName"); if (greet) greet.textContent = profile.userName;
+  const status = document.querySelector(".judite-status:not(#reminderToggle)");
+  if (status) status.textContent = `${profile.assistantName} • Conectada`;
+  const toastStrong = document.querySelector("#voiceToast strong");
+  if (toastStrong) toastStrong.textContent = `${profile.assistantName} diz`;
+  const fab = document.getElementById("voiceFab");
+  if (fab) {
+    fab.setAttribute("aria-label", `Falar com a ${profile.assistantName}`);
+    fab.setAttribute("title", `Tocar para falar (ou diga '${profile.assistantName}, ...')`);
+  }
+}
+
+function openSettings() {
+  document.getElementById("setName").value      = profile.userName;
+  document.getElementById("setAssistant").value = profile.assistantName;
+  document.getElementById("setAddress").value   = profile.userAddress;
+  document.getElementById("settingsModal").classList.add("active");
+  setTimeout(()=>document.getElementById("setName").focus(), 50);
+}
+function closeSettings() {
+  document.getElementById("settingsModal").classList.remove("active");
+}
+function saveSettings() {
+  const u = document.getElementById("setName").value.trim()      || PROFILE_DEFAULTS.userName;
+  const a = document.getElementById("setAssistant").value.trim() || PROFILE_DEFAULTS.assistantName;
+  const adr = document.getElementById("setAddress").value.trim() || PROFILE_DEFAULTS.userAddress;
+  profile = { userName: u, assistantName: a, userAddress: adr };
+  saveProfile();
+  applyProfileToUI();
+  render();
+  closeSettings();
+  showToast(`Configurações salvas. Olá, ${u}!`);
+}
+function resetSettings() {
+  if (!confirm("Restaurar nomes padrão?")) return;
+  profile = { ...PROFILE_DEFAULTS };
+  saveProfile();
+  applyProfileToUI();
+  render();
+  closeSettings();
+}
+loadProfile();
+
 // ── REMINDERS (Notification API + interval) ─────────────
 const REMINDER_KEY  = "judite_reminders_enabled_v1";
 const NOTIF_TRACKER = "judite_notif_tracker_v1";
@@ -824,8 +979,8 @@ async function toggleReminders() {
     if (r === "denied")      return showToast("Permissão de notificação negada. Habilite nas configurações do navegador.");
     remindersEnabled = true;
     localStorage.setItem(REMINDER_KEY, "1");
-    showToast("Lembretes ativados, Chefe. Aviso 15min e 5min antes de cada compromisso.");
-    if (notifGranted()) showNotif("Judite", "Lembretes ativados.");
+    showToast(`Lembretes ativados, ${profile.userAddress}. Aviso 15min e 5min antes de cada compromisso.`);
+    if (notifGranted()) showNotif(profile.assistantName, "Lembretes ativados.");
   } else {
     remindersEnabled = false;
     localStorage.setItem(REMINDER_KEY, "0");
@@ -856,9 +1011,9 @@ function checkReminders() {
     for (const thresh of REMIND_BEFORE) {
       if (minutesUntil > thresh - 1 && minutesUntil <= thresh && !notifTracker[key].includes(thresh)) {
         const msg = thresh <= 5 ? `Em ${thresh} minutos: ${ev.summary}` : `Daqui ${thresh}min: ${ev.summary}`;
-        showNotif("Judite — Lembrete", msg);
+        showNotif(`${profile.assistantName} — Lembrete`, msg);
         showToast(msg);
-        try { speakAs(`Atenção, Chefe. ${msg}.`); } catch{}
+        try { speakAs(`Atenção, ${profile.userAddress}. ${msg}.`); } catch{}
         notifTracker[key].push(thresh);
         saveNotifTracker();
       }
@@ -881,7 +1036,7 @@ loadReminders();
 
 // ── CREATE EVENT (Calendar MCP) ─────────────────────────
 async function createEvent(rawRequest) {
-  showToast("Marcando na sua agenda, Chefe...");
+  showToast(`Marcando na sua agenda, ${profile.userAddress}...`);
   try { speakAs("Marcando."); } catch{}
   setVoiceState("thinking");
   try {
@@ -890,7 +1045,7 @@ async function createEvent(rawRequest) {
 
 Data e hora atuais para referência: ${now.toISOString()} (${todayFull()}, ${now.toLocaleTimeString("pt-BR")}).
 
-Pedido do Chefe: "${rawRequest}"
+Pedido do ${profile.userAddress}: "${rawRequest}"
 
 Interprete em português brasileiro: "hoje", "amanhã", "depois de amanhã", "semana que vem", "próxima segunda/terça/etc.", "daqui 2 horas", "às 14h", "14:30", "às 9 da manhã/da noite", etc.
 Duração padrão: 60 minutos se não especificada.
@@ -911,12 +1066,12 @@ Se o pedido não tiver data/hora claras, NÃO crie nada e retorne:
         ? new Date(dt).toLocaleString("pt-BR", { weekday:"long", day:"2-digit", month:"long", hour:"2-digit", minute:"2-digit" })
         : "";
       if (state.loaded) await loadEvents();
-      return respond(`Marcado, Chefe. ${result.summary || "Compromisso"}${when?" — "+when:""}.`);
+      return respond(`Marcado, ${profile.userAddress}. ${result.summary || "Compromisso"}${when?" — "+when:""}.`);
     }
     return respond(result?.error ? `Não consegui marcar: ${result.error}` : "Não entendi a data ou o horário. Pode repetir com data e hora claras?");
   } catch (e) {
     console.warn("createEvent failed", e);
-    return respond("Falhou ao criar o evento, Chefe. Verifique a conexão com o Google Calendar.");
+    return respond(`Falhou ao criar o evento, ${profile.userAddress}. Verifique a conexão com o Google Calendar.`);
   }
 }
 
@@ -1004,7 +1159,7 @@ function openConsole() {
   const ov = document.getElementById("voiceOverlay");
   ov.classList.add("active"); ov.dataset.mode = "listening";
   const t = document.getElementById("voiceTranscript");
-  t.textContent = "Diga ou digite, Chefe";
+  t.textContent = `Diga ou digite, ${profile.userAddress}`;
   t.classList.add("placeholder");
   document.getElementById("voiceLabel").textContent = voiceSupported() ? "Pronta" : "Modo texto";
   setTimeout(()=>document.getElementById("voiceTextInput")?.focus(), 50);
@@ -1020,7 +1175,7 @@ function startVoice() {
   stopSpeaking();
   VOICE.finalText = "";
   const t = document.getElementById("voiceTranscript");
-  t.textContent = "Diga alguma coisa, Chefe";
+  t.textContent = `Diga alguma coisa, ${profile.userAddress}`;
   t.classList.add("placeholder");
   try { VOICE.rec.start(); setVoiceState("listening"); }
   catch(e) {
@@ -1078,8 +1233,8 @@ function norm(s) { return (s||"").toLowerCase().normalize("NFD").replace(/[\u030
 
 async function processCommand(raw) {
   addHistory("user", raw);
-  let cmd = norm(raw).replace(/^(judite|jarvis|j\.?a\.?r\.?v\.?i\.?s\.?)[,\s]*/i, "").replace(/[.!?]+$/,"").trim();
-  if (!cmd) { respond("Não entendi, Chefe. Pode repetir?"); return; }
+  let cmd = norm(raw).replace(wakeRegex(), "").replace(/[.!?]+$/,"").trim();
+  if (!cmd) { respond(`Não entendi, ${profile.userAddress}. Pode repetir?`); return; }
 
   let m, resp;
 
@@ -1087,7 +1242,7 @@ async function processCommand(raw) {
   if (state._pendingClear && /^(sim|isso|confirma|confirmo|pode|apague? tudo|apagar tudo|esque[cç]a tudo)/.test(cmd)) {
     state._pendingClear = false;
     clearMemory();
-    return respond("Memória apagada, Chefe. Começamos do zero.");
+    return respond(`Memória apagada, ${profile.userAddress}. Começamos do zero.`);
   }
 
   // ── MEMORY: clear all (request confirmation)
@@ -1100,7 +1255,7 @@ async function processCommand(raw) {
   // ── MEMORY: list / what do you know
   if (/(o que voc[eê] sabe (sobre|de) (mim|o chefe)|o que sabe sobre mim|suas mem[oó]rias|liste? (as |suas )?mem[oó]rias|me conte sobre mim|tudo que voc[eê] sabe|qual sua mem[oó]ria)/.test(cmd)) {
     const facts = state.memory.facts;
-    if (!facts.length) return respond("Ainda não sei nada sobre você, Chefe. Diga 'lembre que ...' para eu começar a aprender.");
+    if (!facts.length) return respond(`Ainda não sei nada sobre você, ${profile.userAddress}. Diga 'lembre que ...' para eu começar a aprender.`);
     const top = facts.slice(0, 4).map(f => f.text).join("; ");
     return respond(`Sei ${facts.length} coisa${facts.length>1?"s":""} sobre você. Por exemplo: ${top}.`);
   }
@@ -1117,18 +1272,18 @@ async function processCommand(raw) {
   if (m = cmd.match(/^(lembr(?:e|a|ar)|anot(?:e|a|ar))(?: na (?:sua )?mem[oó]ria)?\s+(?:que|disso|isso)\s+(.+)$/)) {
     const fact = rememberFact(m[2].trim(), "explicit");
     render();
-    return respond(fact ? "Anotado na memória, Chefe." : "Já tinha isso anotado, Chefe.");
+    return respond(fact ? `Anotado na memória, ${profile.userAddress}.` : `Já tinha isso anotado, ${profile.userAddress}.`);
   }
   // ── MEMORY: remember com verbos inequívocos (que opcional)
   if (m = cmd.match(/^(memoriz(?:e|a|ar)|grav(?:e|a|ar)|salv(?:e|a|ar)|guard(?:e|a|ar))(?: na (?:sua )?mem[oó]ria)?\s+(?:que\s+)?(.+)$/)) {
     const fact = rememberFact(m[2].trim(), "explicit");
     render();
-    return respond(fact ? "Anotado na memória, Chefe." : "Já tinha isso anotado, Chefe.");
+    return respond(fact ? `Anotado na memória, ${profile.userAddress}.` : `Já tinha isso anotado, ${profile.userAddress}.`);
   }
 
   // ── REMINDERS toggle
   if (/^(ativ(?:ar|e|a)|lig(?:ar|ue|a)|habilit(?:ar|e|a)) (?:os )?lembretes/.test(cmd)) {
-    if (!remindersEnabled) await toggleReminders(); else respond("Lembretes já estão ativos, Chefe.");
+    if (!remindersEnabled) await toggleReminders(); else respond(`Lembretes já estão ativos, ${profile.userAddress}.`);
     return remindersEnabled ? respond("Lembretes ativos. Aviso 15min e 5min antes.") : null;
   }
   if (/^(desativ(?:ar|e|a)|deslig(?:ar|ue|a)|desabilit(?:ar|e|a)|para(?:r|e) (?:de|com) lembr)/.test(cmd)) {
@@ -1153,7 +1308,7 @@ async function processCommand(raw) {
     const text = capPhrase(m[2]);
     state.tasks.unshift({ id: Date.now().toString(36)+Math.random().toString(36).slice(2,6), text, urgent:false, done:false, createdAt: new Date().toISOString() });
     saveTasks(); render();
-    return respond(`Anotado, Chefe. "${text}" entrou na lista.`);
+    return respond(`Anotado, ${profile.userAddress}. "${text}" entrou na lista.`);
   }
 
   // ── MARK DONE
@@ -1183,7 +1338,7 @@ async function processCommand(raw) {
   // ── LIST TASKS
   if (/^(tarefas?|liste? (as |minhas )?tarefas|me d(iga|ê) (as )?tarefas|quais (as )?tarefas|o que (eu )?tenho (que |pra |para )?fazer|minhas pendencias|pendencias?)/.test(cmd)) {
     const pend = state.tasks.filter(t=>!t.done);
-    if (!pend.length) return respond("Sua lista está limpa, Chefe. Nenhuma pendência.");
+    if (!pend.length) return respond(`Sua lista está limpa, ${profile.userAddress}. Nenhuma pendência.`);
     if (pend.length === 1) return respond(`Uma tarefa pendente: ${pend[0].text}.`);
     const top = pend.slice(0,5).map(t=>t.text).join("; ");
     return respond(`${pend.length} pendentes. As principais: ${top}.`);
@@ -1196,7 +1351,7 @@ async function processCommand(raw) {
     if (/amanha/.test(cmd)) {
       const tk = new Date(Date.now()+86400000).toISOString().split("T")[0];
       evs = state.events.filter(e=>(e.start?.dateTime||e.start?.date||"").startsWith(tk));
-      if (!evs.length) return respond("Amanhã está livre por enquanto, Chefe.");
+      if (!evs.length) return respond(`Amanhã está livre por enquanto, ${profile.userAddress}.`);
       return respond(`Amanhã você tem ${evs.length}: ${evs.map(e=>`${e.summary}${e.start?.dateTime?" às "+fmtTime(e.start.dateTime):""}`).join("; ")}.`);
     }
     evs = state.events.filter(e=>(e.start?.dateTime||e.start?.date||"").startsWith(todayKey()));
@@ -1217,7 +1372,7 @@ async function processCommand(raw) {
   if (/(email|e-mail|inbox|caixa de entrada|mensagem)/.test(cmd)) {
     if (/(urgent|important|prior)/.test(cmd)) {
       const u = state.emails.filter(e=>isPriority(e.sender));
-      if (!u.length) return respond("Nada urgente na caixa, Chefe.");
+      if (!u.length) return respond(`Nada urgente na caixa, ${profile.userAddress}.`);
       return respond(`${u.length} urgente${u.length>1?"s":""}: ${u.slice(0,3).map(e=>{const c=classify(e.sender);return `${c?.label||e.sender} sobre ${e.subject}`}).join("; ")}.`);
     }
     if (/(financ|banco|extrato|conta)/.test(cmd)) {
@@ -1235,7 +1390,7 @@ async function processCommand(raw) {
 
   // ── BRIEFING
   if (/(briefing|resumo|resumir|me atualize|atualize-me|relatorio|me conte|fala|status|panorama)/.test(cmd)) {
-    respond("Preparando seu briefing, Chefe.");
+    respond(`Preparando seu briefing, ${profile.userAddress}.`);
     await getAI();
     if (state.aiText) speakAs(state.aiText.replace(/[^\w\s.,;:!?àáâãäéêíïóôõöúçñÀ-ÿ-]/g," ").replace(/\s+/g," "));
     return;
@@ -1251,7 +1406,7 @@ async function processCommand(raw) {
   // ── TIME / DATE
   if (/(que horas|que hora|hora atual|me diz a hora)/.test(cmd)) {
     const t = new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
-    return respond(`São ${t}, Chefe.`);
+    return respond(`São ${t}, ${profile.userAddress}.`);
   }
   if (/(que dia|que data|hoje e dia|qual a data)/.test(cmd)) {
     return respond(`Hoje é ${todayFull()}.`);
@@ -1259,12 +1414,12 @@ async function processCommand(raw) {
 
   // ── GREETING
   if (/^(ola|oi|opa|e ai|bom dia|boa tarde|boa noite|judite)$/.test(cmd)) {
-    return respond(`${greeting().replace(/[☀️🌤️🌙]/g,"").trim()}, Chefe. Em que posso ajudar?`);
+    return respond(`${greeting().replace(/[☀️🌤️🌙]/g,"").trim()}, ${profile.userAddress}. Em que posso ajudar?`);
   }
 
   // ── THANKS
   if (/^(obrigad[oa]|valeu|tchau|ate mais|fechou|beleza)/.test(cmd)) {
-    return respond("Sempre às ordens, Chefe.");
+    return respond(`Sempre às ordens, ${profile.userAddress}.`);
   }
 
   // ── HELP
@@ -1277,7 +1432,7 @@ async function processCommand(raw) {
     const answer = await askJudite(raw);
     return respond(answer);
   } catch {
-    return respond("Não consegui processar essa, Chefe. Tente reformular.");
+    return respond(`Não consegui processar essa, ${profile.userAddress}. Tente reformular.`);
   }
 }
 
@@ -1286,7 +1441,7 @@ async function askJudite(question) {
   const evs  = state.events.filter(e=>(e.start?.dateTime||e.start?.date||"").startsWith(todayKey()));
   const urgent = state.emails.filter(e=>isPriority(e.sender));
   const memFacts = state.memory.facts.slice(0, 40).map(f=>"- "+f.text).join("\n") || "(memória vazia)";
-  const memHist  = state.memory.history.slice(-7, -1).map(h=>`${h.role==="user"?"Chefe":"Judite"}: ${h.text}`).join("\n") || "(primeira conversa)";
+  const memHist  = state.memory.history.slice(-7, -1).map(h=>`${h.role==="user"?profile.userAddress:profile.assistantName}: ${h.text}`).join("\n") || "(primeira conversa)";
   const ctx = [
     `Data: ${todayFull()}, ${new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})}`,
     `Eventos hoje: ${evs.map(e=>e.summary+(e.start?.dateTime?" às "+fmtTime(e.start.dateTime):"")).join("; ")||"nenhum"}`,
@@ -1294,9 +1449,9 @@ async function askJudite(question) {
     `Tarefas pendentes (${pend.length}): ${pend.slice(0,8).map(t=>t.text).join("; ")||"nenhuma"}`,
     `Emails urgentes: ${urgent.slice(0,5).map(e=>e.subject).join("; ")||"nenhum"}`,
   ].join("\n");
-  const prompt = `Você é a Judite, assistente pessoal do Marcello (Chefe), no estilo Jarvis do Homem de Ferro. Responda em 1-3 frases, em português natural (sem emojis, sem markdown, sem listas), pronta para ser falada em voz alta. Trate-o como "Chefe". Use a memória pessoal e a conversa recente para responder de forma contextual.
+  const prompt = `Você é a ${profile.assistantName}, assistente pessoal de ${profile.userName} (${profile.userAddress}), no estilo Jarvis do Homem de Ferro. Responda em 1-3 frases, em português natural (sem emojis, sem markdown, sem listas), pronta para ser falada em voz alta. Trate-o como ${profile.userAddress}. Use a memória pessoal e a conversa recente para responder de forma contextual.
 
-Memória pessoal (o que você já aprendeu sobre o Chefe):
+Memória pessoal (o que você já aprendeu sobre o ${profile.userAddress}):
 ${memFacts}
 
 Contexto do dia:
@@ -1305,20 +1460,20 @@ ${ctx}
 Conversa recente:
 ${memHist}
 
-Pergunta atual do Chefe: ${question}
+Pergunta atual do ${profile.userAddress}: ${question}
 
-Após sua resposta, se NESTA pergunta apareceu um FATO NOVO importante sobre o Chefe (preferência, hábito, pessoa, data fixa, gosto) que NÃO está na memória acima, adicione no FINAL uma linha exatamente assim:
+Após sua resposta, se NESTA pergunta apareceu um FATO NOVO importante sobre o ${profile.userAddress} (preferência, hábito, pessoa, data fixa, gosto) que NÃO está na memória acima, adicione no FINAL uma linha exatamente assim:
 [LEMBRAR: fato curto em uma frase; outro fato se houver]
 
 Não invente fatos. Se nada novo, NÃO adicione a linha [LEMBRAR:].`;
   const r = await callClaude(prompt);
-  let answer = typeof r === "string" ? r : (Array.isArray(r) ? JSON.stringify(r) : "Resposta indisponível, Chefe.");
+  let answer = typeof r === "string" ? r : (Array.isArray(r) ? JSON.stringify(r) : `Resposta indisponível, ${profile.userAddress}.`);
   const learn = answer.match(/\[LEMBRAR:\s*([^\]]+)\]/i);
   if (learn) {
     learn[1].split(";").map(s=>s.trim()).filter(Boolean).forEach(f => rememberFact(f, "auto"));
     answer = answer.replace(/\[LEMBRAR:[^\]]+\]\s*$/i, "").trim();
   }
-  return answer || "Sem resposta agora, Chefe.";
+  return answer || `Sem resposta agora, ${profile.userAddress}.`;
 }
 
 function respond(text) {
@@ -1352,6 +1507,7 @@ if ("speechSynthesis" in window) { try { speechSynthesis.getVoices(); loadVoiceV
 // ── INIT ─────────────────────────────────────────────────
 document.getElementById("greetingLabel").textContent = greeting();
 document.getElementById("headerDate").textContent    = cap(todayFull());
+applyProfileToUI();
 updateReminderBadge();
 
 // ── API CALL ─────────────────────────────────────────────
@@ -1431,9 +1587,9 @@ async function getAI() {
       `Tarefas pendentes (${pend.length}): ${pend.slice(0,6).map(t=>t.text).join("; ")||"nenhuma"}`,
       `Tarefas marcadas urgentes: ${urgentTasks.map(t=>t.text).join("; ")||"nenhuma"}`,
     ].join("\n");
-    const r = await callClaude(`Você é a Judite, assistente pessoal do Marcello. Trate-o como "Chefe". Escreva um briefing direto em português, no máximo 6 linhas, com tom profissional-amigável (estilo concierge de cockpit). Destaque urgências, agenda e finanças, e termine com uma dica de ação prática. Use emojis com moderação. Não se apresente nem cumprimente — vá direto ao ponto.\n\n${ctx}`);
+    const r = await callClaude(`Você é a ${profile.assistantName}, assistente pessoal de ${profile.userName}. Trate-o como ${profile.userAddress}. Escreva um briefing direto em português, no máximo 6 linhas, com tom profissional-amigável (estilo concierge de cockpit). Destaque urgências, agenda e finanças, e termine com uma dica de ação prática. Use emojis com moderação. Não se apresente nem cumprimente — vá direto ao ponto.\n\n${ctx}`);
     state.aiText = typeof r==="string"?r:JSON.stringify(r);
-  } catch { state.aiText = "Sistemas indisponíveis no momento, Chefe. Tente novamente."; }
+  } catch { state.aiText = `Sistemas indisponíveis no momento, ${profile.userAddress}. Tente novamente.`; }
   state.aiLoading = false; render();
 }
 
@@ -1563,10 +1719,10 @@ function render() {
     html += `
       <div class="ai-card">
         <div class="ai-header">
-          <div class="judite-identity" onclick="startVoice()" title="Tocar para falar com a Judite">
+          <div class="judite-identity" onclick="startVoice()" title="Tocar para falar com a ${profile.assistantName}">
             <div class="judite-avatar"></div>
             <div>
-              <div class="judite-name">Judite</div>
+              <div class="judite-name">${profile.assistantName}</div>
               <div class="judite-role">Assistente de Voz</div>
             </div>
           </div>
@@ -1578,8 +1734,8 @@ function render() {
           </div>
         </div>
         ${state.aiText
-          ?`<div class="ai-says">Judite diz</div><div class="ai-text">${state.aiText}</div>`
-          :`<div class="ai-placeholder">Toque o microfone 🎤 e diga "Judite, ..." — ou peça um briefing.</div>`
+          ?`<div class="ai-says">${profile.assistantName} diz</div><div class="ai-text">${state.aiText}</div>`
+          :`<div class="ai-placeholder">Toque o microfone 🎤 e diga "${profile.assistantName}, ..." — ou peça um briefing.</div>`
         }
       </div>`;
 
@@ -1642,7 +1798,7 @@ function render() {
           <div style="width:26px;height:26px;flex-shrink:0;border-radius:50%;background:${f.source==='auto'?'#7c3aed22':'#10b98122'};border:1px solid ${f.source==='auto'?'#7c3aed66':'#10b98166'};display:flex;align-items:center;justify-content:center;font-size:12px;color:${f.source==='auto'?'#a78bfa':'#34d399'}">${f.source==='auto'?'⚡':'✓'}</div>
           <div class="task-body">
             <div class="task-text">${escapeHtml(f.text)}</div>
-            <div class="task-meta">${ago(f.createdAt)} · ${f.source==='auto'?'aprendido pela Judite':'ensinado por você'}</div>
+            <div class="task-meta">${ago(f.createdAt)} · ${f.source==='auto'?'aprendido pela '+profile.assistantName:'ensinado por você'}</div>
           </div>
           <div class="task-actions">
             <button class="task-btn" onclick="deleteFact('${f.id}')" title="Esquecer">×</button>
@@ -1658,7 +1814,7 @@ function render() {
       <div class="section" style="border-color:#10b98122">
         <div class="section-head">
           <span style="font-size:15px">🧠</span>
-          <span class="section-title">Memória da Judite</span>
+          <span class="section-title">Memória da ${profile.assistantName}</span>
           <span class="section-badge" style="background:#10b98122;color:#10b981;border:1px solid #10b98144">${facts.length}</span>
         </div>
         <div class="tasks-add">
