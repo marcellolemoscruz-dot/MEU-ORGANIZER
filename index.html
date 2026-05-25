@@ -564,7 +564,10 @@ body[data-voice="speaking"] .judite-avatar,
     </button>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span class="judite-status">Judite • Conectada</span>
+  <div style="margin-top:8px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;position:relative;z-index:1">
+    <span class="judite-status">Judite • Conectada</span>
+    <button class="judite-status" id="reminderToggle" onclick="toggleReminders()" style="margin-top:0;border:1px solid #3b7fff44;background:#3b7fff14;cursor:pointer;font-family:'JetBrains Mono',monospace">🔕 Lembretes OFF</button>
+  </div>
 </div>
 
 <!-- STATS -->
@@ -636,8 +639,8 @@ body[data-voice="speaking"] .judite-avatar,
     <button onclick="submitVoiceText()" aria-label="Enviar">→</button>
   </div>
   <div class="voice-hint">
-    Tente: "adicionar tarefa comprar café" · "agenda de hoje"<br/>
-    "fazer briefing" · "que horas são" · "ler emails urgentes"
+    "marcar reunião amanhã 14h" · "agenda de hoje"<br/>
+    "adicionar tarefa X" · "lembre que ..." · "ativar lembretes"
   </div>
 </div>
 
@@ -780,6 +783,142 @@ function addMemFromInput() {
   document.getElementById("memInput")?.focus();
 }
 loadMemory();
+
+// ── REMINDERS (Notification API + interval) ─────────────
+const REMINDER_KEY  = "judite_reminders_enabled_v1";
+const NOTIF_TRACKER = "judite_notif_tracker_v1";
+const REMIND_BEFORE = [15, 5]; // minutos antes
+let notifTracker = {};
+let remindersEnabled = false;
+
+function loadReminders() {
+  remindersEnabled = localStorage.getItem(REMINDER_KEY) === "1";
+  try { notifTracker = JSON.parse(localStorage.getItem(NOTIF_TRACKER)||"{}"); }
+  catch { notifTracker = {}; }
+}
+function saveNotifTracker() { localStorage.setItem(NOTIF_TRACKER, JSON.stringify(notifTracker)); }
+
+function notifSupported() { return "Notification" in window; }
+function notifGranted()   { return notifSupported() && Notification.permission === "granted"; }
+
+async function requestNotifPermission() {
+  if (!notifSupported()) return "unsupported";
+  if (Notification.permission === "granted") return "granted";
+  if (Notification.permission === "denied")  return "denied";
+  try { return await Notification.requestPermission(); }
+  catch { return "denied"; }
+}
+
+function showNotif(title, body) {
+  if (!notifGranted()) return false;
+  try {
+    new Notification(title, { body, tag: title + body, icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23050b18'/><text y='.9em' font-size='80' x='10'>🤖</text></svg>" });
+    return true;
+  } catch { return false; }
+}
+
+async function toggleReminders() {
+  if (!remindersEnabled) {
+    const r = await requestNotifPermission();
+    if (r === "unsupported") return showToast("Notificações não suportadas neste navegador.");
+    if (r === "denied")      return showToast("Permissão de notificação negada. Habilite nas configurações do navegador.");
+    remindersEnabled = true;
+    localStorage.setItem(REMINDER_KEY, "1");
+    showToast("Lembretes ativados, Chefe. Aviso 15min e 5min antes de cada compromisso.");
+    if (notifGranted()) showNotif("Judite", "Lembretes ativados.");
+  } else {
+    remindersEnabled = false;
+    localStorage.setItem(REMINDER_KEY, "0");
+    showToast("Lembretes desativados.");
+  }
+  updateReminderBadge();
+}
+
+function updateReminderBadge() {
+  const el = document.getElementById("reminderToggle");
+  if (!el) return;
+  el.textContent = remindersEnabled ? "🔔 Lembretes ON" : "🔕 Lembretes OFF";
+  el.style.opacity = remindersEnabled ? "1" : "0.55";
+}
+
+function eventKey(e) { return (e.start?.dateTime||e.start?.date||"") + "|" + (e.summary||""); }
+
+function checkReminders() {
+  if (!remindersEnabled || !notifGranted()) return;
+  const now = Date.now();
+  for (const ev of state.events) {
+    const dt = ev.start?.dateTime; if (!dt) continue;
+    const t = new Date(dt).getTime();
+    if (t < now) continue;
+    const minutesUntil = (t - now) / 60000;
+    const key = eventKey(ev);
+    notifTracker[key] = notifTracker[key] || [];
+    for (const thresh of REMIND_BEFORE) {
+      if (minutesUntil > thresh - 1 && minutesUntil <= thresh && !notifTracker[key].includes(thresh)) {
+        const msg = thresh <= 5 ? `Em ${thresh} minutos: ${ev.summary}` : `Daqui ${thresh}min: ${ev.summary}`;
+        showNotif("Judite — Lembrete", msg);
+        showToast(msg);
+        try { speakAs(`Atenção, Chefe. ${msg}.`); } catch{}
+        notifTracker[key].push(thresh);
+        saveNotifTracker();
+      }
+    }
+  }
+}
+
+function cleanNotifTracker() {
+  const cutoff = Date.now() - 3*3600000;
+  for (const key of Object.keys(notifTracker)) {
+    const dtStr = key.split("|")[0];
+    if (dtStr && new Date(dtStr).getTime() < cutoff) delete notifTracker[key];
+  }
+  saveNotifTracker();
+}
+
+setInterval(checkReminders, 60000);
+setInterval(cleanNotifTracker, 3600000);
+loadReminders();
+
+// ── CREATE EVENT (Calendar MCP) ─────────────────────────
+async function createEvent(rawRequest) {
+  showToast("Marcando na sua agenda, Chefe...");
+  try { speakAs("Marcando."); } catch{}
+  setVoiceState("thinking");
+  try {
+    const now = new Date();
+    const prompt = `Use o Google Calendar (create_event) para criar um compromisso no calendário 'primary' do usuário.
+
+Data e hora atuais para referência: ${now.toISOString()} (${todayFull()}, ${now.toLocaleTimeString("pt-BR")}).
+
+Pedido do Chefe: "${rawRequest}"
+
+Interprete em português brasileiro: "hoje", "amanhã", "depois de amanhã", "semana que vem", "próxima segunda/terça/etc.", "daqui 2 horas", "às 14h", "14:30", "às 9 da manhã/da noite", etc.
+Duração padrão: 60 minutos se não especificada.
+Timezone: America/Sao_Paulo se não informado.
+
+Após criar o evento, retorne APENAS um objeto JSON nesta estrutura (sem markdown, sem texto fora do JSON):
+{"success": true, "summary": "...", "start": "ISO8601", "end": "ISO8601"}
+
+Se o pedido não tiver data/hora claras, NÃO crie nada e retorne:
+{"success": false, "error": "razão curta em português"}`;
+
+    const r = await callClaude(prompt, CALENDAR_MCP, "calendar");
+    const result = (r && typeof r === "object" && !Array.isArray(r)) ? r : (Array.isArray(r) && r[0]) ? r[0] : null;
+
+    if (result && result.success) {
+      const dt = result.start;
+      const when = dt
+        ? new Date(dt).toLocaleString("pt-BR", { weekday:"long", day:"2-digit", month:"long", hour:"2-digit", minute:"2-digit" })
+        : "";
+      if (state.loaded) await loadEvents();
+      return respond(`Marcado, Chefe. ${result.summary || "Compromisso"}${when?" — "+when:""}.`);
+    }
+    return respond(result?.error ? `Não consegui marcar: ${result.error}` : "Não entendi a data ou o horário. Pode repetir com data e hora claras?");
+  } catch (e) {
+    console.warn("createEvent failed", e);
+    return respond("Falhou ao criar o evento, Chefe. Verifique a conexão com o Google Calendar.");
+  }
+}
 
 // ── VOICE (Speech Recognition + Synthesis) ──────────────
 const VOICE = {
@@ -987,6 +1126,28 @@ async function processCommand(raw) {
     return respond(fact ? "Anotado na memória, Chefe." : "Já tinha isso anotado, Chefe.");
   }
 
+  // ── REMINDERS toggle
+  if (/^(ativ(?:ar|e|a)|lig(?:ar|ue|a)|habilit(?:ar|e|a)) (?:os )?lembretes/.test(cmd)) {
+    if (!remindersEnabled) await toggleReminders(); else respond("Lembretes já estão ativos, Chefe.");
+    return remindersEnabled ? respond("Lembretes ativos. Aviso 15min e 5min antes.") : null;
+  }
+  if (/^(desativ(?:ar|e|a)|deslig(?:ar|ue|a)|desabilit(?:ar|e|a)|para(?:r|e) (?:de|com) lembr)/.test(cmd)) {
+    if (remindersEnabled) await toggleReminders();
+    return respond("Lembretes desativados.");
+  }
+
+  // ── CREATE EVENT (Calendar)
+  const isCalCmd = (
+    /^agend/.test(cmd) ||
+    (/^cri(?:ar|e)\b/.test(cmd) && /\b(evento|reuni|compromisso|hor[aá]rio|call|consulta|encontro)\b/.test(cmd)) ||
+    /^(coloc|por|p[oô]e)\b.*\b(agenda|calend[aá]rio)\b/.test(cmd) ||
+    (/^marc(?:ar|a)\b/.test(cmd) && /\b(reuni|compromisso|consulta|encontro|evento|call|hor[aá]rio (?:com|de|para)|na agenda|no calend[aá]rio)\b/.test(cmd) && !/\bcomo (feita|conclui|pronta|done|finaliz|terminad)/.test(cmd))
+  );
+  if (isCalCmd) {
+    await createEvent(raw);
+    return;
+  }
+
   // ── ADD TASK
   if (m = cmd.match(/^(adicion(?:ar|e)|anot(?:ar|e|a)|crie?|criar|nov[ao]|lembrar de|lembr(?:ar|e) que|coloca?r?|coloc(?:a|ar)) (?:uma |um |a |o )?(?:tarefa |item |lembrete |compromisso )?(.+)$/)) {
     const text = capPhrase(m[2]);
@@ -1108,7 +1269,7 @@ async function processCommand(raw) {
 
   // ── HELP
   if (/(ajuda|comandos|o que voce (faz|sabe|pode)|me ensina|opcoes)/.test(cmd)) {
-    return respond("Posso adicionar tarefas, listar agenda, ler emails, gerar briefing, marcar tarefas como feitas, e responder dúvidas. Diga, por exemplo: adicionar tarefa comprar café.");
+    return respond("Posso marcar compromissos na agenda, listar sua agenda, adicionar e concluir tarefas, lembrar fatos sobre você, ler emails urgentes, dar briefing, e ativar lembretes antes dos compromissos. Diga, por exemplo: marcar reunião amanhã às 14h.");
   }
 
   // ── FALLBACK: ask Claude with context
@@ -1191,6 +1352,7 @@ if ("speechSynthesis" in window) { try { speechSynthesis.getVoices(); loadVoiceV
 // ── INIT ─────────────────────────────────────────────────
 document.getElementById("greetingLabel").textContent = greeting();
 document.getElementById("headerDate").textContent    = cap(todayFull());
+updateReminderBadge();
 
 // ── API CALL ─────────────────────────────────────────────
 async function callClaude(prompt, mcpUrl, mcpName) {
@@ -1206,9 +1368,11 @@ async function callClaude(prompt, mcpUrl, mcpName) {
     if (data.error) throw new Error(data.error.message);
     const text  = (data.content||[]).find(b=>b.type==="text")?.text||"";
     const clean = text.replace(/```json|```/g,"").trim();
-    const m     = clean.match(/\[[\s\S]*\]/);
-    if (!m) return typeof clean==="string"?clean:[];
-    return JSON.parse(m[0]);
+    const arr = clean.match(/\[[\s\S]*\]/);
+    if (arr) { try { const v = JSON.parse(arr[0]); if (Array.isArray(v)) return v; } catch{} }
+    const obj = clean.match(/\{[\s\S]*\}/);
+    if (obj) { try { return JSON.parse(obj[0]); } catch{} }
+    return clean;
   } catch(e) { clearTimeout(timer); throw e; }
 }
 
