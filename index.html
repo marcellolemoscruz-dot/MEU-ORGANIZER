@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="Organizer"/>
 <meta name="description" content="Personal Organizer — Marcello"/>
-<title>Personal Organizer</title>
+<title>Judite — Personal Organizer</title>
 
 <!-- PWA Manifest inline -->
 <link rel="manifest" href="manifest.json"/>
@@ -192,15 +192,58 @@ body {
 /* ── EMPTY ────────────────────────────────────────────── */
 .empty { padding: 16px 14px; font-size: 12px; color: var(--muted); }
 
-/* ── AI CARD ──────────────────────────────────────────── */
+/* ── JUDITE STATUS BADGE (header) ─────────────────────── */
+.judite-status {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 8px; padding: 3px 9px;
+  background: #3b7fff14; border: 1px solid #3b7fff44;
+  border-radius: 20px;
+  font-size: 9px; font-weight: 700; letter-spacing: .14em;
+  text-transform: uppercase; color: #93c5fd;
+  font-family: 'JetBrains Mono', monospace;
+}
+.judite-status::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--green); box-shadow: 0 0 6px var(--green);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* ── AI CARD (Judite) ─────────────────────────────────── */
 .ai-card {
   background: linear-gradient(135deg, #0d1f40, #0c1628);
   border: 1px solid #3b7fff33; border-radius: var(--r);
   padding: 14px 16px; margin-bottom: 12px;
   animation: fadeUp .3s ease both;
 }
-.ai-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.ai-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; gap: 10px; }
 .ai-title { font-size: 11px; font-weight: 800; color: #93c5fd; text-transform: uppercase; letter-spacing: .08em; }
+
+.judite-identity { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; }
+.judite-avatar {
+  width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+  background: radial-gradient(circle at 30% 30%, #93c5fd, var(--accent) 60%, #1d4ed8);
+  box-shadow: 0 0 14px #3b7fffaa, inset 0 0 6px #ffffff33;
+  animation: juditePulse 2.4s ease-in-out infinite;
+  position: relative;
+}
+.judite-avatar::after {
+  content: ''; position: absolute; inset: 0; border-radius: 50%;
+  border: 1px solid #93c5fd66;
+  animation: ping 2.4s ease-out infinite;
+}
+.judite-name { font-size: 13px; font-weight: 800; color: #e8edf5; line-height: 1.1; letter-spacing: -.2px; }
+.judite-role { font-size: 9px; font-weight: 700; color: #93c5fd; letter-spacing: .12em; text-transform: uppercase; margin-top: 2px; }
+
+.ai-says {
+  font-size: 10px; font-weight: 700; color: #93c5fd;
+  text-transform: uppercase; letter-spacing: .1em;
+  margin-bottom: 4px;
+}
+
+@keyframes juditePulse {
+  0%, 100% { box-shadow: 0 0 14px #3b7fffaa, inset 0 0 6px #ffffff33; }
+  50%      { box-shadow: 0 0 22px #3b7fffee, inset 0 0 8px #ffffff55; }
+}
 .btn-ai {
   background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
   color: var(--muted); cursor: pointer; padding: 4px 12px;
@@ -298,6 +341,7 @@ body {
     </button>
   </div>
   <div class="header-date" id="headerDate"></div>
+  <span class="judite-status">Judite • Conectada</span>
 </div>
 
 <!-- STATS -->
@@ -477,9 +521,9 @@ async function getAI() {
       `Financeiro: ${fin.slice(0,4).map(e=>e.subject).join("; ")||"nenhum"}`,
       `Colégio Montreal: ${school.map(e=>e.subject).join("; ")||"nenhum"}`,
     ].join("\n");
-    const r = await callClaude(`Você é o assistente pessoal do Marcello. Escreva um briefing matinal direto em português, máximo 6 linhas. Destaque urgências e dê uma dica de ação. Use emojis.\n\n${ctx}`);
+    const r = await callClaude(`Você é a Judite, assistente pessoal do Marcello. Trate-o como "Chefe". Escreva um briefing direto em português, no máximo 6 linhas, com tom profissional-amigável (estilo concierge de cockpit). Destaque urgências, agenda e finanças, e termine com uma dica de ação prática. Use emojis com moderação. Não se apresente nem cumprimente — vá direto ao ponto.\n\n${ctx}`);
     state.aiText = typeof r==="string"?r:JSON.stringify(r);
-  } catch { state.aiText = "Não foi possível gerar o briefing."; }
+  } catch { state.aiText = "Sistemas indisponíveis no momento, Chefe. Tente novamente."; }
   state.aiLoading = false; render();
 }
 
@@ -589,14 +633,20 @@ function render() {
     html += `
       <div class="ai-card">
         <div class="ai-header">
-          <span class="ai-title">🤖 Briefing do dia</span>
+          <div class="judite-identity">
+            <div class="judite-avatar"></div>
+            <div>
+              <div class="judite-name">Judite</div>
+              <div class="judite-role">Assistente Pessoal</div>
+            </div>
+          </div>
           <button class="btn-ai" onclick="getAI()" ${state.aiLoading?"disabled":""}>
-            ${state.aiLoading?spinner():"✨"} ${state.aiLoading?"Analisando...":"Gerar"}
+            ${state.aiLoading?spinner():"✨"} ${state.aiLoading?"Pensando...":"Briefing"}
           </button>
         </div>
         ${state.aiText
-          ?`<div class="ai-text">${state.aiText}</div>`
-          :`<div class="ai-placeholder">Toque em "Gerar" para seu briefing personalizado com IA.</div>`
+          ?`<div class="ai-says">Judite diz</div><div class="ai-text">${state.aiText}</div>`
+          :`<div class="ai-placeholder">Toque em "Briefing" para a Judite resumir o seu dia.</div>`
         }
       </div>`;
 
