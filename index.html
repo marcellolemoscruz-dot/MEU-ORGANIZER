@@ -244,6 +244,60 @@ body {
   0%, 100% { box-shadow: 0 0 14px #3b7fffaa, inset 0 0 6px #ffffff33; }
   50%      { box-shadow: 0 0 22px #3b7fffee, inset 0 0 8px #ffffff55; }
 }
+
+/* ── TASKS ────────────────────────────────────────────── */
+.tasks-add {
+  display: flex; gap: 8px; padding: 10px 14px;
+  border-top: 1px solid var(--border);
+}
+.tasks-add input {
+  flex: 1; min-width: 0;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--r-sm); padding: 9px 12px;
+  color: var(--text); font-family: 'Outfit', sans-serif; font-size: 13px;
+  outline: none; transition: border-color .15s;
+}
+.tasks-add input:focus { border-color: var(--accent); }
+.tasks-add button {
+  background: var(--accent); border: none; border-radius: var(--r-sm);
+  color: #fff; width: 38px; cursor: pointer; font-size: 18px; font-weight: 700;
+  transition: transform .12s;
+}
+.tasks-add button:active { transform: scale(.92); }
+
+.task-row {
+  display: flex; gap: 10px; align-items: center;
+  padding: 10px 14px; border-top: 1px solid var(--border);
+  animation: fadeUp .3s ease both;
+}
+.task-check {
+  width: 22px; height: 22px; flex-shrink: 0;
+  border-radius: 50%; border: 2px solid var(--dim);
+  background: transparent; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; color: transparent; transition: all .15s;
+  padding: 0;
+}
+.task-check.done {
+  background: var(--green); border-color: var(--green); color: #fff;
+}
+.task-body { flex: 1; min-width: 0; }
+.task-text {
+  font-size: 13px; font-weight: 600; color: var(--text);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.task-row.done .task-text { color: var(--muted); text-decoration: line-through; }
+.task-meta { font-size: 10px; color: var(--dim); margin-top: 2px; font-family: 'JetBrains Mono', monospace; }
+.task-actions { display: flex; gap: 4px; flex-shrink: 0; }
+.task-btn {
+  width: 28px; height: 28px; border-radius: 8px;
+  background: var(--bg3); border: 1px solid var(--border);
+  color: var(--muted); cursor: pointer; font-size: 13px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s; padding: 0;
+}
+.task-btn:active { transform: scale(.9); }
+.task-btn.urgent-on { background: #ef444422; border-color: #ef444466; color: var(--red); }
 .btn-ai {
   background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
   color: var(--muted); cursor: pointer; padding: 4px 12px;
@@ -366,6 +420,11 @@ body {
     <div class="stat-val" id="s-school" style="color:#f59e0b">—</div>
     <div class="stat-lbl">Colégio</div>
   </div>
+  <div class="stat">
+    <div class="stat-icon">✅</div>
+    <div class="stat-val" id="s-tasks" style="color:#7c3aed">—</div>
+    <div class="stat-lbl">Tarefas</div>
+  </div>
 </div>
 
 <!-- TABS -->
@@ -374,6 +433,7 @@ body {
   <button class="tab" onclick="setTab('urgente')">🚨 Urgente</button>
   <button class="tab" onclick="setTab('financeiro')">💰 Financeiro</button>
   <button class="tab" onclick="setTab('agenda')">📅 Agenda</button>
+  <button class="tab" onclick="setTab('tarefas')">✅ Tarefas</button>
   <button class="tab" onclick="setTab('colegio')">🏫 Colégio</button>
   <button class="tab" onclick="setTab('todos')">📧 Emails</button>
 </div>
@@ -443,8 +503,36 @@ function trunc(s,n)  { return s&&s.length>n?s.slice(0,n)+"…":s||""; }
 function spinner(color="#3b7fff"){ return `<span class="spinner" style="border-top-color:${color}"></span>`; }
 
 // ── STATE ────────────────────────────────────────────────
-let state = { emails:[], events:[], loadingEmails:false, loadingEvents:false, emailError:"", eventError:"", loaded:false, aiText:"", aiLoading:false };
+let state = { emails:[], events:[], tasks:[], loadingEmails:false, loadingEvents:false, emailError:"", eventError:"", loaded:false, aiText:"", aiLoading:false };
 let currentTab = "hoje";
+
+// ── TASKS (localStorage) ────────────────────────────────
+const TASKS_KEY = "judite_tasks_v1";
+function loadTasks() {
+  try { state.tasks = JSON.parse(localStorage.getItem(TASKS_KEY)||"[]"); }
+  catch { state.tasks = []; }
+}
+function saveTasks() { localStorage.setItem(TASKS_KEY, JSON.stringify(state.tasks)); }
+function addTask() {
+  const input = document.getElementById("taskInput");
+  const text  = (input?.value||"").trim();
+  if (!text) return;
+  state.tasks.unshift({ id: Date.now().toString(36)+Math.random().toString(36).slice(2,6), text, urgent:false, done:false, createdAt: new Date().toISOString() });
+  saveTasks(); input.value = ""; render();
+}
+function toggleTask(id) {
+  const t = state.tasks.find(t=>t.id===id); if (!t) return;
+  t.done = !t.done; saveTasks(); render();
+}
+function toggleUrgent(id) {
+  const t = state.tasks.find(t=>t.id===id); if (!t) return;
+  t.urgent = !t.urgent; saveTasks(); render();
+}
+function deleteTask(id) {
+  state.tasks = state.tasks.filter(t=>t.id!==id); saveTasks(); render();
+}
+function handleTaskKey(e) { if (e.key === "Enter") addTask(); }
+loadTasks();
 
 // ── INIT ─────────────────────────────────────────────────
 document.getElementById("greetingLabel").textContent = greeting();
@@ -515,11 +603,15 @@ async function getAI() {
     const school = state.emails.filter(e=>isSchool(e.sender));
     const fin    = state.emails.filter(e=>isFinancial(e.sender));
     const evs    = state.events.filter(e=>(e.start?.dateTime||e.start?.date||"").startsWith(todayKey()));
+    const pend   = state.tasks.filter(t=>!t.done);
+    const urgentTasks = pend.filter(t=>t.urgent);
     const ctx    = [
       `Emails urgentes: ${urgent.slice(0,5).map(e=>e.subject).join("; ")||"nenhum"}`,
       `Eventos hoje: ${evs.map(e=>e.summary).join("; ")||"nenhum"}`,
       `Financeiro: ${fin.slice(0,4).map(e=>e.subject).join("; ")||"nenhum"}`,
       `Colégio Montreal: ${school.map(e=>e.subject).join("; ")||"nenhum"}`,
+      `Tarefas pendentes (${pend.length}): ${pend.slice(0,6).map(t=>t.text).join("; ")||"nenhuma"}`,
+      `Tarefas marcadas urgentes: ${urgentTasks.map(t=>t.text).join("; ")||"nenhuma"}`,
     ].join("\n");
     const r = await callClaude(`Você é a Judite, assistente pessoal do Marcello. Trate-o como "Chefe". Escreva um briefing direto em português, no máximo 6 linhas, com tom profissional-amigável (estilo concierge de cockpit). Destaque urgências, agenda e finanças, e termine com uma dica de ação prática. Use emojis com moderação. Não se apresente nem cumprimente — vá direto ao ponto.\n\n${ctx}`);
     state.aiText = typeof r==="string"?r:JSON.stringify(r);
@@ -531,7 +623,7 @@ async function getAI() {
 function setTab(tab) {
   currentTab = tab;
   document.querySelectorAll(".tab").forEach((t,i)=>{
-    const ids = ["hoje","urgente","financeiro","agenda","colegio","todos"];
+    const ids = ["hoje","urgente","financeiro","agenda","tarefas","colegio","todos"];
     t.classList.toggle("active", ids[i]===tab);
   });
   render();
@@ -543,10 +635,12 @@ function updateStats() {
   const evs    = state.events.filter(e=>(e.start?.dateTime||e.start?.date||"").startsWith(todayKey())).length;
   const fin    = state.emails.filter(e=>isFinancial(e.sender)).length;
   const school = state.emails.filter(e=>isSchool(e.sender)).length;
+  const pendingTasks = state.tasks.filter(t=>!t.done).length;
   document.getElementById("s-urgent").textContent = urgent;
   document.getElementById("s-events").textContent = evs;
   document.getElementById("s-fin").textContent    = fin;
   document.getElementById("s-school").textContent = school;
+  document.getElementById("s-tasks").textContent  = pendingTasks;
 }
 
 function setRefreshLoading(on) {
@@ -573,6 +667,24 @@ function emailRow(email, idx) {
         <div class="row-sub">${trunc(email.subject,55)}</div>
       </div>
       <div class="row-time">${ago(email.date)}</div>
+    </div>`;
+}
+
+function escapeHtml(s){ return (s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+function taskRow(task, idx) {
+  const checkMark = task.done ? "✓" : "";
+  return `
+    <div class="task-row ${task.done?'done':''}" style="animation-delay:${idx*25}ms">
+      <button class="task-check ${task.done?'done':''}" onclick="toggleTask('${task.id}')">${checkMark}</button>
+      <div class="task-body">
+        <div class="task-text">${task.urgent && !task.done ? '<span class="dot"><span></span><i></i></span> ' : ''}${escapeHtml(task.text)}</div>
+        <div class="task-meta">${ago(task.createdAt)}</div>
+      </div>
+      <div class="task-actions">
+        <button class="task-btn ${task.urgent?'urgent-on':''}" onclick="toggleUrgent('${task.id}')" title="Urgente">!</button>
+        <button class="task-btn" onclick="deleteTask('${task.id}')" title="Excluir">×</button>
+      </div>
     </div>`;
 }
 
@@ -663,6 +775,10 @@ function render() {
 
     if (!state.loadingEmails && !state.emailError && fin.length)
       html += section("#10b98122","💰","Financeiro",fin.length,"#10b981", fin.slice(0,3).map(emailRow), false,"","","loadEmails");
+
+    const pendingPreview = state.tasks.filter(t=>!t.done).sort((a,b)=>(b.urgent?1:0)-(a.urgent?1:0));
+    if (pendingPreview.length)
+      html += section("#7c3aed22","✅","Tarefas pendentes", pendingPreview.length, "#7c3aed", pendingPreview.slice(0,3).map(taskRow), false, "", "", "");
   }
 
   if (currentTab === "urgente")
@@ -674,6 +790,29 @@ function render() {
   if (currentTab === "agenda")
     html += section("#3b7fff22","📅","Próximos 7 dias",state.events.length,"#3b7fff", state.events.map(eventRow), state.loadingEvents, state.eventError, "Nenhum evento nos próximos 7 dias.","loadEvents");
 
+  if (currentTab === "tarefas") {
+    const sorted  = [...state.tasks].sort((a,b)=>{
+      if (a.done !== b.done) return a.done?1:-1;
+      if (a.urgent !== b.urgent) return a.urgent?-1:1;
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    });
+    const pending = state.tasks.filter(t=>!t.done).length;
+    const body    = sorted.length ? sorted.map(taskRow).join("") : `<div class="empty">Nenhuma tarefa por aqui. Adicione a primeira acima.</div>`;
+    html += `
+      <div class="section" style="border-color:#7c3aed22">
+        <div class="section-head">
+          <span style="font-size:15px">✅</span>
+          <span class="section-title">Tarefas</span>
+          <span class="section-badge" style="background:#7c3aed22;color:#7c3aed;border:1px solid #7c3aed44">${pending} pend.</span>
+        </div>
+        <div class="tasks-add">
+          <input id="taskInput" placeholder="Nova tarefa..." onkeydown="handleTaskKey(event)" maxlength="120" />
+          <button onclick="addTask()" aria-label="Adicionar">+</button>
+        </div>
+        ${body}
+      </div>`;
+  }
+
   if (currentTab === "colegio")
     html += section("#f59e0b22","🏫","Lorena — Colégio Montreal",school.length,"#f59e0b", school.map(emailRow), state.loadingEmails, state.emailError, "Nenhum recado do colégio.","loadEmails");
 
@@ -681,12 +820,23 @@ function render() {
     html += section("#3b7fff22","📧","Todos os emails",state.emails.length,"#60a5fa", state.emails.map(emailRow), state.loadingEmails, state.emailError, "Nenhum email carregado.","loadEmails");
   }
 
+  // Preserva valor/foco do input de tarefas entre renders
+  const prevInput   = document.getElementById("taskInput");
+  const prevVal     = prevInput?.value || "";
+  const prevFocused = document.activeElement === prevInput;
+
   // Limpa e injeta (preserva hero)
   const nodes = Array.from(c.childNodes).filter(n=>n.id!=="hero");
   nodes.forEach(n=>n.remove());
   const tmp = document.createElement("div");
   tmp.innerHTML = html;
   while(tmp.firstChild) c.appendChild(tmp.firstChild);
+
+  const newInput = document.getElementById("taskInput");
+  if (newInput) {
+    if (prevVal) newInput.value = prevVal;
+    if (prevFocused) newInput.focus();
+  }
 }
 
 // ── PWA INSTALL ───────────────────────────────────────────
