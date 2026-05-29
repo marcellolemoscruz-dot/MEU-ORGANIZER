@@ -7,8 +7,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="Organizer"/>
-<meta name="description" content="Personal Organizer — Marcello"/>
-<title>Personal Organizer</title>
+<meta name="description" content="Assistente pessoal por voz"/>
+<title>Judite — Personal Organizer</title>
 
 <!-- PWA Manifest inline -->
 <link rel="manifest" href="manifest.json"/>
@@ -79,6 +79,7 @@ body {
   width: 180px; height: 180px;
   background: radial-gradient(circle, #3b7fff18 0%, transparent 70%);
   border-radius: 50%;
+  pointer-events: none;
 }
 .header-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 4px; }
 .greeting-label {
@@ -97,6 +98,7 @@ body {
   background: var(--bg3); display: flex; align-items: center; justify-content: center;
   font-size: 17px; flex-shrink: 0; transition: all .2s;
   border: 1px solid var(--border);
+  position: relative; z-index: 2;
 }
 .btn-refresh:active { transform: scale(.92); }
 .btn-refresh.loading span { display: inline-block; animation: spin .7s linear infinite; }
@@ -192,15 +194,338 @@ body {
 /* ── EMPTY ────────────────────────────────────────────── */
 .empty { padding: 16px 14px; font-size: 12px; color: var(--muted); }
 
-/* ── AI CARD ──────────────────────────────────────────── */
+/* ── JUDITE STATUS BADGE (header) ─────────────────────── */
+.judite-status {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 8px; padding: 3px 9px;
+  background: #3b7fff14; border: 1px solid #3b7fff44;
+  border-radius: 20px;
+  font-size: 9px; font-weight: 700; letter-spacing: .14em;
+  text-transform: uppercase; color: #93c5fd;
+  font-family: 'JetBrains Mono', monospace;
+}
+.judite-status::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--green); box-shadow: 0 0 6px var(--green);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* ── AI CARD (Judite) ─────────────────────────────────── */
 .ai-card {
   background: linear-gradient(135deg, #0d1f40, #0c1628);
   border: 1px solid #3b7fff33; border-radius: var(--r);
   padding: 14px 16px; margin-bottom: 12px;
   animation: fadeUp .3s ease both;
 }
-.ai-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.ai-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; gap: 10px; }
 .ai-title { font-size: 11px; font-weight: 800; color: #93c5fd; text-transform: uppercase; letter-spacing: .08em; }
+
+.judite-identity { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1; }
+.judite-avatar {
+  width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+  background: radial-gradient(circle at 30% 30%, #93c5fd, var(--accent) 60%, #1d4ed8);
+  box-shadow: 0 0 14px #3b7fffaa, inset 0 0 6px #ffffff33;
+  animation: juditePulse 2.4s ease-in-out infinite;
+  position: relative;
+}
+.judite-avatar::after {
+  content: ''; position: absolute; inset: 0; border-radius: 50%;
+  border: 1px solid #93c5fd66;
+  animation: ping 2.4s ease-out infinite;
+}
+.judite-name { font-size: 13px; font-weight: 800; color: #e8edf5; line-height: 1.1; letter-spacing: -.2px; }
+.judite-role { font-size: 9px; font-weight: 700; color: #93c5fd; letter-spacing: .12em; text-transform: uppercase; margin-top: 2px; }
+
+.ai-says {
+  font-size: 10px; font-weight: 700; color: #93c5fd;
+  text-transform: uppercase; letter-spacing: .1em;
+  margin-bottom: 4px;
+}
+
+@keyframes juditePulse {
+  0%, 100% { box-shadow: 0 0 14px #3b7fffaa, inset 0 0 6px #ffffff33; }
+  50%      { box-shadow: 0 0 22px #3b7fffee, inset 0 0 8px #ffffff55; }
+}
+
+/* ── TASKS ────────────────────────────────────────────── */
+.tasks-add {
+  display: flex; gap: 8px; padding: 10px 14px;
+  border-top: 1px solid var(--border);
+}
+.tasks-add input {
+  flex: 1; min-width: 0;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--r-sm); padding: 9px 12px;
+  color: var(--text); font-family: 'Outfit', sans-serif; font-size: 13px;
+  outline: none; transition: border-color .15s;
+}
+.tasks-add input:focus { border-color: var(--accent); }
+.tasks-add button {
+  background: var(--accent); border: none; border-radius: var(--r-sm);
+  color: #fff; width: 38px; cursor: pointer; font-size: 18px; font-weight: 700;
+  transition: transform .12s;
+}
+.tasks-add button:active { transform: scale(.92); }
+
+.task-row {
+  display: flex; gap: 10px; align-items: center;
+  padding: 10px 14px; border-top: 1px solid var(--border);
+  animation: fadeUp .3s ease both;
+}
+.task-check {
+  width: 22px; height: 22px; flex-shrink: 0;
+  border-radius: 50%; border: 2px solid var(--dim);
+  background: transparent; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; color: transparent; transition: all .15s;
+  padding: 0;
+}
+.task-check.done {
+  background: var(--green); border-color: var(--green); color: #fff;
+}
+.task-body { flex: 1; min-width: 0; }
+.task-text {
+  font-size: 13px; font-weight: 600; color: var(--text);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.task-row.done .task-text { color: var(--muted); text-decoration: line-through; }
+.task-meta { font-size: 10px; color: var(--dim); margin-top: 2px; font-family: 'JetBrains Mono', monospace; }
+.task-actions { display: flex; gap: 4px; flex-shrink: 0; }
+.task-btn {
+  width: 28px; height: 28px; border-radius: 8px;
+  background: var(--bg3); border: 1px solid var(--border);
+  color: var(--muted); cursor: pointer; font-size: 13px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s; padding: 0;
+}
+.task-btn:active { transform: scale(.9); }
+.task-btn.urgent-on { background: #ef444422; border-color: #ef444466; color: var(--red); }
+
+/* ── VOICE FAB ────────────────────────────────────────── */
+.voice-fab {
+  position: fixed; right: 16px;
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  width: 64px; height: 64px; border-radius: 50%; border: none;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #fff; font-size: 26px; cursor: pointer;
+  box-shadow: 0 8px 28px #3b7fff66;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 50; transition: transform .12s;
+}
+.voice-fab:active { transform: scale(.92); }
+.voice-fab.listening {
+  background: linear-gradient(135deg, var(--red), #b91c1c);
+  animation: fabPulseRed 1.4s ease-out infinite;
+}
+.voice-fab.speaking  {
+  background: linear-gradient(135deg, #06b6d4, var(--accent));
+  animation: fabPulseBlue 1.4s ease-out infinite;
+}
+@keyframes fabPulseRed  {
+  0%,100% { box-shadow: 0 8px 28px #ef444466, 0 0 0 0 #ef444466; }
+  50%     { box-shadow: 0 8px 28px #ef444466, 0 0 0 22px #ef444400; }
+}
+@keyframes fabPulseBlue {
+  0%,100% { box-shadow: 0 8px 28px #3b7fff66, 0 0 0 0 #3b7fff66; }
+  50%     { box-shadow: 0 8px 28px #3b7fff66, 0 0 0 22px #3b7fff00; }
+}
+
+/* ── VOICE OVERLAY ────────────────────────────────────── */
+.voice-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  background: radial-gradient(circle at 50% 40%, #0c1a35 0%, #050b18 75%);
+  display: none; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 40px 24px; text-align: center;
+  backdrop-filter: blur(8px);
+  animation: fadeUp .25s ease both;
+}
+.voice-overlay.active { display: flex; }
+.voice-orb {
+  width: 130px; height: 130px; border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #93c5fd, var(--accent) 50%, #1d4ed8);
+  box-shadow: 0 0 60px #3b7fff99, inset 0 0 20px #ffffff33;
+  animation: orbPulse 1.8s ease-in-out infinite;
+  margin-bottom: 28px; position: relative;
+}
+.voice-orb::before, .voice-orb::after {
+  content: ''; position: absolute; inset: -16px;
+  border-radius: 50%; border: 1px solid #3b7fff66;
+  animation: orbRing 2.4s ease-out infinite;
+}
+.voice-orb::after { animation-delay: 1.2s; }
+.voice-overlay[data-mode="thinking"] .voice-orb {
+  background: radial-gradient(circle at 30% 30%, #c4b5fd, var(--accent2) 50%, #4c1d95);
+  box-shadow: 0 0 60px #7c3aedaa, inset 0 0 20px #ffffff33;
+}
+.voice-overlay[data-mode="speaking"] .voice-orb {
+  background: radial-gradient(circle at 30% 30%, #99f6e4, #06b6d4 50%, #155e75);
+  box-shadow: 0 0 60px #06b6d4aa, inset 0 0 20px #ffffff33;
+  animation: orbPulse 0.8s ease-in-out infinite;
+}
+@keyframes orbPulse {
+  0%,100% { transform: scale(1); }
+  50%     { transform: scale(1.07); }
+}
+@keyframes orbRing {
+  0%   { transform: scale(.85); opacity: .8; }
+  100% { transform: scale(1.55); opacity: 0; }
+}
+.voice-label {
+  font-size: 10px; font-weight: 800; letter-spacing: .2em;
+  text-transform: uppercase; color: #93c5fd;
+  margin-bottom: 10px; font-family: 'JetBrains Mono', monospace;
+}
+.voice-transcript {
+  font-size: 22px; font-weight: 600; color: var(--text);
+  line-height: 1.35; max-width: 360px; min-height: 64px;
+  letter-spacing: -.3px;
+}
+.voice-transcript.placeholder { color: var(--muted); font-weight: 400; }
+.voice-hint {
+  font-size: 11px; color: var(--dim);
+  margin-top: 28px; line-height: 1.7; max-width: 320px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.voice-close {
+  position: absolute; top: 20px; right: 20px;
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--bg3); border: 1px solid var(--border);
+  color: var(--text); font-size: 16px; cursor: pointer;
+}
+
+/* ── VOICE TEXT INPUT (fallback / file://) ───────────── */
+.voice-input-row {
+  display: flex; gap: 8px; margin-top: 22px;
+  width: 100%; max-width: 380px;
+}
+.voice-input-row input {
+  flex: 1; min-width: 0;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--r-sm); padding: 12px 14px;
+  color: var(--text); font-family: 'Outfit', sans-serif; font-size: 14px;
+  outline: none; transition: border-color .15s;
+}
+.voice-input-row input:focus { border-color: var(--accent); }
+.voice-input-row button {
+  background: var(--accent); border: none; border-radius: var(--r-sm);
+  color: #fff; width: 46px; cursor: pointer; font-size: 18px; font-weight: 700;
+}
+.voice-input-row button:active { transform: scale(.94); }
+.voice-or {
+  font-size: 9px; color: var(--dim); letter-spacing: .2em;
+  text-transform: uppercase; margin-top: 18px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ── JUDITE AVATAR STATES (driven by body[data-voice]) ── */
+body[data-voice="listening"] .judite-avatar,
+.judite-avatar.listening {
+  background: radial-gradient(circle at 30% 30%, #fca5a5, var(--red) 60%, #7f1d1d) !important;
+  animation: avatarPulseRed 1s ease-in-out infinite !important;
+}
+body[data-voice="speaking"] .judite-avatar,
+.judite-avatar.speaking {
+  background: radial-gradient(circle at 30% 30%, #99f6e4, #06b6d4 50%, #155e75) !important;
+  animation: avatarPulseFast .55s ease-in-out infinite !important;
+}
+@keyframes avatarPulseRed {
+  0%,100% { box-shadow: 0 0 14px #ef4444aa, inset 0 0 6px #ffffff33; }
+  50%     { box-shadow: 0 0 26px #ef4444ff, inset 0 0 8px #ffffff55; }
+}
+@keyframes avatarPulseFast {
+  0%,100% { box-shadow: 0 0 14px #06b6d4aa, inset 0 0 6px #ffffff33; transform: scale(1); }
+  50%     { box-shadow: 0 0 28px #06b6d4ff, inset 0 0 10px #ffffff77; transform: scale(1.06); }
+}
+.judite-avatar { cursor: pointer; }
+
+/* ── VOICE TOAST ─────────────────────────────────────── */
+.voice-toast {
+  position: fixed; top: 16px; left: 50%;
+  transform: translateX(-50%) translateY(-24px);
+  background: linear-gradient(135deg, #0d1f40, #0c1628);
+  border: 1px solid var(--accent); border-radius: var(--r);
+  padding: 12px 16px; max-width: calc(100% - 32px); width: max-content;
+  font-size: 13px; color: var(--text); font-weight: 500; line-height: 1.4;
+  box-shadow: 0 8px 24px #00000099, 0 0 24px #3b7fff44;
+  opacity: 0; pointer-events: none;
+  transition: all .3s; z-index: 150; text-align: left;
+}
+.voice-toast.active {
+  opacity: 1; transform: translateX(-50%) translateY(0);
+}
+.voice-toast strong {
+  color: #93c5fd; display: block; font-size: 9px; font-weight: 800;
+  letter-spacing: .14em; text-transform: uppercase; margin-bottom: 4px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ── SETTINGS MODAL ──────────────────────────────────── */
+.btn-settings {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--bg3); border: 1px solid var(--border);
+  color: var(--text); font-size: 18px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: transform .15s;
+  position: relative; z-index: 2;
+}
+.btn-settings:active { transform: rotate(45deg) scale(.92); }
+
+.settings-modal {
+  position: fixed; inset: 0; z-index: 250;
+  background: rgba(5,11,24,.78); backdrop-filter: blur(6px);
+  display: none; align-items: center; justify-content: center;
+  padding: 20px;
+}
+.settings-modal.active { display: flex; animation: fadeUp .25s ease both; }
+.settings-card {
+  background: linear-gradient(135deg, #0d1f40, #0c1628);
+  border: 1px solid var(--accent); border-radius: var(--r);
+  padding: 22px 22px 18px;
+  width: 100%; max-width: 380px;
+  box-shadow: 0 24px 60px #00000099, 0 0 40px #3b7fff44;
+}
+.settings-title {
+  font-size: 11px; font-weight: 800; color: #93c5fd;
+  letter-spacing: .14em; text-transform: uppercase;
+  margin-bottom: 4px; font-family: 'JetBrains Mono', monospace;
+}
+.settings-subtitle { font-size: 12px; color: var(--muted); margin-bottom: 18px; line-height: 1.5; }
+.settings-field { margin-bottom: 14px; }
+.settings-label {
+  display: block; font-size: 10px; font-weight: 700;
+  color: var(--muted); margin-bottom: 6px;
+  text-transform: uppercase; letter-spacing: .1em;
+}
+.settings-input {
+  width: 100%; background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--r-sm); padding: 11px 14px;
+  color: var(--text); font-family: 'Outfit', sans-serif; font-size: 14px;
+  outline: none; transition: border-color .15s;
+}
+.settings-input:focus { border-color: var(--accent); }
+.settings-hint { font-size: 10px; color: var(--dim); margin-top: 4px; }
+.settings-actions { display: flex; gap: 8px; margin-top: 20px; }
+.settings-actions button {
+  flex: 1; border-radius: var(--r-sm); border: none;
+  padding: 11px 12px; font-family: 'Outfit', sans-serif;
+  font-weight: 700; font-size: 13px; cursor: pointer;
+  transition: transform .12s;
+}
+.settings-actions button:active { transform: scale(.96); }
+.btn-cancel { background: var(--bg3); color: var(--muted); border: 1px solid var(--border) !important; }
+.btn-save   { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; }
+.btn-reset  { background: transparent; color: var(--red); border: 1px solid #ef444433 !important; }
+
+/* ── SPEAK BUTTON (inside AI card) ───────────────────── */
+.btn-speak {
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
+  color: var(--muted); cursor: pointer; padding: 4px 10px;
+  font-size: 11px; font-family: 'Outfit', sans-serif; font-weight: 600;
+  margin-left: 8px; transition: all .15s;
+}
+.btn-speak:active { transform: scale(.95); }
+.btn-speak.on { background: var(--accent); color: #fff; border-color: var(--accent); }
 .btn-ai {
   background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
   color: var(--muted); cursor: pointer; padding: 4px 12px;
@@ -293,11 +618,18 @@ body {
       <div class="greeting-label" id="greetingLabel">Carregando...</div>
       <div class="greeting-name" id="greetingName">Marcello</div>
     </div>
-    <button class="btn-refresh" id="btnRefresh" onclick="loadAll()">
-      <span>🔄</span>
-    </button>
+    <div style="display:flex;gap:6px;align-items:center;flex-shrink:0">
+      <button class="btn-settings" onclick="openSettings()" aria-label="Configurações" title="Configurações">⚙️</button>
+      <button class="btn-refresh" id="btnRefresh" onclick="loadAll()">
+        <span>🔄</span>
+      </button>
+    </div>
   </div>
   <div class="header-date" id="headerDate"></div>
+  <div style="margin-top:8px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;position:relative;z-index:1">
+    <span class="judite-status">Judite • Conectada</span>
+    <button class="judite-status" id="reminderToggle" onclick="toggleReminders()" style="margin-top:0;border:1px solid #3b7fff44;background:#3b7fff14;cursor:pointer;font-family:'JetBrains Mono',monospace">🔕 Lembretes OFF</button>
+  </div>
 </div>
 
 <!-- STATS -->
@@ -322,6 +654,11 @@ body {
     <div class="stat-val" id="s-school" style="color:#f59e0b">—</div>
     <div class="stat-lbl">Colégio</div>
   </div>
+  <div class="stat">
+    <div class="stat-icon">✅</div>
+    <div class="stat-val" id="s-tasks" style="color:#7c3aed">—</div>
+    <div class="stat-lbl">Tarefas</div>
+  </div>
 </div>
 
 <!-- TABS -->
@@ -330,6 +667,8 @@ body {
   <button class="tab" onclick="setTab('urgente')">🚨 Urgente</button>
   <button class="tab" onclick="setTab('financeiro')">💰 Financeiro</button>
   <button class="tab" onclick="setTab('agenda')">📅 Agenda</button>
+  <button class="tab" onclick="setTab('tarefas')">✅ Tarefas</button>
+  <button class="tab" onclick="setTab('memoria')">🧠 Memória</button>
   <button class="tab" onclick="setTab('colegio')">🏫 Colégio</button>
   <button class="tab" onclick="setTab('todos')">📧 Emails</button>
 </div>
@@ -346,6 +685,64 @@ body {
 </div>
 
 <div class="safe-bottom"></div>
+
+<!-- VOICE FAB -->
+<button class="voice-fab" id="voiceFab" onclick="toggleVoice()" aria-label="Falar com a Judite" title="Tocar para falar (ou diga 'Judite, ...')">🎤</button>
+
+<!-- VOICE OVERLAY -->
+<div class="voice-overlay" id="voiceOverlay" data-mode="listening" onclick="overlayTap(event)">
+  <button class="voice-close" onclick="cancelVoice()" aria-label="Fechar">✕</button>
+  <div class="voice-orb"></div>
+  <div class="voice-label" id="voiceLabel">Ouvindo...</div>
+  <div class="voice-transcript placeholder" id="voiceTranscript">Diga alguma coisa, Chefe</div>
+  <div class="voice-or">ou digite</div>
+  <div class="voice-input-row">
+    <input id="voiceTextInput" placeholder="Digite um comando..." onkeydown="handleVoiceTextKey(event)" autocomplete="off" />
+    <button onclick="submitVoiceText()" aria-label="Enviar">→</button>
+  </div>
+  <div class="voice-hint">
+    "marcar reunião amanhã 14h" · "agenda de hoje"<br/>
+    "adicionar tarefa X" · "lembre que ..." · "ativar lembretes"
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="settings-modal" id="settingsModal" onclick="if(event.target.id==='settingsModal')closeSettings()">
+  <div class="settings-card">
+    <div class="settings-title">⚙️ Configurações</div>
+    <div class="settings-subtitle">Personalize quem usa o app e o nome da assistente. Salvo só neste dispositivo.</div>
+
+    <div class="settings-field">
+      <label class="settings-label">Seu nome</label>
+      <input id="setName" class="settings-input" placeholder="Cláudio" maxlength="40" />
+      <div class="settings-hint">Aparece na saudação ("Bom dia, Cláudio")</div>
+    </div>
+
+    <div class="settings-field">
+      <label class="settings-label">Nome da assistente</label>
+      <input id="setAssistant" class="settings-input" placeholder="Judite" maxlength="40" />
+      <div class="settings-hint">Use esse nome pra chamar ela: "{nome}, agenda de hoje"</div>
+    </div>
+
+    <div class="settings-field">
+      <label class="settings-label">Como ela te chama</label>
+      <input id="setAddress" class="settings-input" placeholder="Chefe" maxlength="40" />
+      <div class="settings-hint">Ex: Chefe, Chefa, Cláudio, amor</div>
+    </div>
+
+    <div class="settings-actions">
+      <button class="btn-cancel" onclick="closeSettings()">Cancelar</button>
+      <button class="btn-save" onclick="saveSettings()">Salvar</button>
+    </div>
+    <div style="margin-top:10px"><button class="btn-reset" onclick="resetSettings()" style="width:100%;padding:8px;font-size:11px">Restaurar padrão</button></div>
+  </div>
+</div>
+
+<!-- VOICE TOAST -->
+<div class="voice-toast" id="voiceToast" onclick="this.classList.remove('active')">
+  <strong>Judite diz</strong>
+  <span id="voiceToastText"></span>
+</div>
 
 <!-- INSTALL BANNER -->
 <div class="install-banner" id="installBanner" style="display:none">
@@ -399,12 +796,728 @@ function trunc(s,n)  { return s&&s.length>n?s.slice(0,n)+"…":s||""; }
 function spinner(color="#3b7fff"){ return `<span class="spinner" style="border-top-color:${color}"></span>`; }
 
 // ── STATE ────────────────────────────────────────────────
-let state = { emails:[], events:[], loadingEmails:false, loadingEvents:false, emailError:"", eventError:"", loaded:false, aiText:"", aiLoading:false };
+let state = { emails:[], events:[], tasks:[], memory:{facts:[],history:[]}, loadingEmails:false, loadingEvents:false, emailError:"", eventError:"", loaded:false, aiText:"", aiLoading:false };
 let currentTab = "hoje";
+
+// ── TASKS (localStorage) ────────────────────────────────
+const TASKS_KEY = "judite_tasks_v1";
+function loadTasks() {
+  try { state.tasks = JSON.parse(localStorage.getItem(TASKS_KEY)||"[]"); }
+  catch { state.tasks = []; }
+}
+function saveTasks() { localStorage.setItem(TASKS_KEY, JSON.stringify(state.tasks)); }
+function addTask() {
+  const input = document.getElementById("taskInput");
+  const text  = (input?.value||"").trim();
+  if (!text) return;
+  state.tasks.unshift({ id: Date.now().toString(36)+Math.random().toString(36).slice(2,6), text, urgent:false, done:false, createdAt: new Date().toISOString() });
+  saveTasks(); input.value = ""; render();
+}
+function toggleTask(id) {
+  const t = state.tasks.find(t=>t.id===id); if (!t) return;
+  t.done = !t.done; saveTasks(); render();
+}
+function toggleUrgent(id) {
+  const t = state.tasks.find(t=>t.id===id); if (!t) return;
+  t.urgent = !t.urgent; saveTasks(); render();
+}
+function deleteTask(id) {
+  state.tasks = state.tasks.filter(t=>t.id!==id); saveTasks(); render();
+}
+function handleTaskKey(e) { if (e.key === "Enter") addTask(); }
+loadTasks();
+
+// ── MEMORY (localStorage) ───────────────────────────────
+const MEMORY_KEY = "judite_memory_v1";
+function loadMemory() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(MEMORY_KEY)||"{}");
+    state.memory = { facts: stored.facts||[], history: stored.history||[] };
+  } catch { state.memory = { facts: [], history: [] }; }
+}
+function saveMemory() { localStorage.setItem(MEMORY_KEY, JSON.stringify(state.memory)); }
+function _normFact(s) { return (s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[.!?,;]+$/,"").trim(); }
+function rememberFact(text, source) {
+  const t = (text||"").trim().replace(/[.!?]+$/,"");
+  if (!t) return null;
+  const n = _normFact(t);
+  if (state.memory.facts.some(f => _normFact(f.text) === n)) return null;
+  const fact = { id: Date.now().toString(36)+Math.random().toString(36).slice(2,6), text: t, source: source||"explicit", createdAt: new Date().toISOString() };
+  state.memory.facts.unshift(fact);
+  state.memory.facts = state.memory.facts.slice(0, 200);
+  saveMemory();
+  return fact;
+}
+function forgetFact(needle) {
+  if (!needle) return 0;
+  const n = _normFact(needle);
+  const before = state.memory.facts.length;
+  state.memory.facts = state.memory.facts.filter(f => !_normFact(f.text).includes(n));
+  saveMemory();
+  return before - state.memory.facts.length;
+}
+function deleteFact(id) {
+  state.memory.facts = state.memory.facts.filter(f => f.id !== id);
+  saveMemory(); render();
+}
+function clearMemory() { state.memory = { facts: [], history: [] }; saveMemory(); render(); }
+function addHistory(role, text) {
+  if (!text) return;
+  state.memory.history.push({ role, text: text.slice(0, 600), t: Date.now() });
+  state.memory.history = state.memory.history.slice(-30);
+  saveMemory();
+}
+function handleMemKey(e) { if (e.key === "Enter") addMemFromInput(); }
+function addMemFromInput() {
+  const i = document.getElementById("memInput");
+  const t = (i?.value||"").trim();
+  if (!t) return;
+  rememberFact(t, "explicit");
+  i.value = ""; render();
+  document.getElementById("memInput")?.focus();
+}
+loadMemory();
+
+// ── PROFILE (user/assistant names) ──────────────────────
+const PROFILE_KEY = "judite_profile_v1";
+const PROFILE_DEFAULTS = { userName: "Marcello", assistantName: "Judite", userAddress: "Chefe" };
+let profile = { ...PROFILE_DEFAULTS };
+
+function loadProfile() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(PROFILE_KEY)||"{}");
+    profile = { ...PROFILE_DEFAULTS, ...stored };
+  } catch { profile = { ...PROFILE_DEFAULTS }; }
+}
+function saveProfile() { localStorage.setItem(PROFILE_KEY, JSON.stringify(profile)); }
+
+function escapeRegex(s) { return (s||"").replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+function wakeRegex() {
+  const a = escapeRegex(norm(profile.assistantName||"judite"));
+  return new RegExp(`^(${a}|jarvis|j\\.?a\\.?r\\.?v\\.?i\\.?s\\.?)[,\\s]*`, "i");
+}
+
+function applyProfileToUI() {
+  document.title = `${profile.assistantName} — Personal Organizer`;
+  const greet = document.getElementById("greetingName"); if (greet) greet.textContent = profile.userName;
+  const status = document.querySelector(".judite-status:not(#reminderToggle)");
+  if (status) status.textContent = `${profile.assistantName} • Conectada`;
+  const toastStrong = document.querySelector("#voiceToast strong");
+  if (toastStrong) toastStrong.textContent = `${profile.assistantName} diz`;
+  const fab = document.getElementById("voiceFab");
+  if (fab) {
+    fab.setAttribute("aria-label", `Falar com a ${profile.assistantName}`);
+    fab.setAttribute("title", `Tocar para falar (ou diga '${profile.assistantName}, ...')`);
+  }
+}
+
+function openSettings() {
+  document.getElementById("setName").value      = profile.userName;
+  document.getElementById("setAssistant").value = profile.assistantName;
+  document.getElementById("setAddress").value   = profile.userAddress;
+  document.getElementById("settingsModal").classList.add("active");
+  setTimeout(()=>document.getElementById("setName").focus(), 50);
+}
+function closeSettings() {
+  document.getElementById("settingsModal").classList.remove("active");
+}
+function saveSettings() {
+  const u = document.getElementById("setName").value.trim()      || PROFILE_DEFAULTS.userName;
+  const a = document.getElementById("setAssistant").value.trim() || PROFILE_DEFAULTS.assistantName;
+  const adr = document.getElementById("setAddress").value.trim() || PROFILE_DEFAULTS.userAddress;
+  profile = { userName: u, assistantName: a, userAddress: adr };
+  saveProfile();
+  applyProfileToUI();
+  render();
+  closeSettings();
+  showToast(`Configurações salvas. Olá, ${u}!`);
+}
+function resetSettings() {
+  if (!confirm("Restaurar nomes padrão?")) return;
+  profile = { ...PROFILE_DEFAULTS };
+  saveProfile();
+  applyProfileToUI();
+  render();
+  closeSettings();
+}
+loadProfile();
+
+// ── REMINDERS (Notification API + interval) ─────────────
+const REMINDER_KEY  = "judite_reminders_enabled_v1";
+const NOTIF_TRACKER = "judite_notif_tracker_v1";
+const REMIND_BEFORE = [15, 5]; // minutos antes
+let notifTracker = {};
+let remindersEnabled = false;
+
+function loadReminders() {
+  remindersEnabled = localStorage.getItem(REMINDER_KEY) === "1";
+  try { notifTracker = JSON.parse(localStorage.getItem(NOTIF_TRACKER)||"{}"); }
+  catch { notifTracker = {}; }
+}
+function saveNotifTracker() { localStorage.setItem(NOTIF_TRACKER, JSON.stringify(notifTracker)); }
+
+function notifSupported() { return "Notification" in window; }
+function notifGranted()   { return notifSupported() && Notification.permission === "granted"; }
+
+async function requestNotifPermission() {
+  if (!notifSupported()) return "unsupported";
+  if (Notification.permission === "granted") return "granted";
+  if (Notification.permission === "denied")  return "denied";
+  try { return await Notification.requestPermission(); }
+  catch { return "denied"; }
+}
+
+function showNotif(title, body) {
+  if (!notifGranted()) return false;
+  try {
+    new Notification(title, { body, tag: title + body, icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23050b18'/><text y='.9em' font-size='80' x='10'>🤖</text></svg>" });
+    return true;
+  } catch { return false; }
+}
+
+async function toggleReminders() {
+  if (!remindersEnabled) {
+    const r = await requestNotifPermission();
+    if (r === "unsupported") return showToast("Notificações não suportadas neste navegador.");
+    if (r === "denied")      return showToast("Permissão de notificação negada. Habilite nas configurações do navegador.");
+    remindersEnabled = true;
+    localStorage.setItem(REMINDER_KEY, "1");
+    showToast(`Lembretes ativados, ${profile.userAddress}. Aviso 15min e 5min antes de cada compromisso.`);
+    if (notifGranted()) showNotif(profile.assistantName, "Lembretes ativados.");
+  } else {
+    remindersEnabled = false;
+    localStorage.setItem(REMINDER_KEY, "0");
+    showToast("Lembretes desativados.");
+  }
+  updateReminderBadge();
+}
+
+function updateReminderBadge() {
+  const el = document.getElementById("reminderToggle");
+  if (!el) return;
+  el.textContent = remindersEnabled ? "🔔 Lembretes ON" : "🔕 Lembretes OFF";
+  el.style.opacity = remindersEnabled ? "1" : "0.55";
+}
+
+function eventKey(e) { return (e.start?.dateTime||e.start?.date||"") + "|" + (e.summary||""); }
+
+function checkReminders() {
+  if (!remindersEnabled || !notifGranted()) return;
+  const now = Date.now();
+  for (const ev of state.events) {
+    const dt = ev.start?.dateTime; if (!dt) continue;
+    const t = new Date(dt).getTime();
+    if (t < now) continue;
+    const minutesUntil = (t - now) / 60000;
+    const key = eventKey(ev);
+    notifTracker[key] = notifTracker[key] || [];
+    for (const thresh of REMIND_BEFORE) {
+      if (minutesUntil > thresh - 1 && minutesUntil <= thresh && !notifTracker[key].includes(thresh)) {
+        const msg = thresh <= 5 ? `Em ${thresh} minutos: ${ev.summary}` : `Daqui ${thresh}min: ${ev.summary}`;
+        showNotif(`${profile.assistantName} — Lembrete`, msg);
+        showToast(msg);
+        try { speakAs(`Atenção, ${profile.userAddress}. ${msg}.`); } catch{}
+        notifTracker[key].push(thresh);
+        saveNotifTracker();
+      }
+    }
+  }
+}
+
+function cleanNotifTracker() {
+  const cutoff = Date.now() - 3*3600000;
+  for (const key of Object.keys(notifTracker)) {
+    const dtStr = key.split("|")[0];
+    if (dtStr && new Date(dtStr).getTime() < cutoff) delete notifTracker[key];
+  }
+  saveNotifTracker();
+}
+
+setInterval(checkReminders, 60000);
+setInterval(cleanNotifTracker, 3600000);
+loadReminders();
+
+// ── CREATE EVENT (Calendar MCP) ─────────────────────────
+async function createEvent(rawRequest) {
+  showToast(`Marcando na sua agenda, ${profile.userAddress}...`);
+  try { speakAs("Marcando."); } catch{}
+  setVoiceState("thinking");
+  try {
+    const now = new Date();
+    const prompt = `Use o Google Calendar (create_event) para criar um compromisso no calendário 'primary' do usuário.
+
+Data e hora atuais para referência: ${now.toISOString()} (${todayFull()}, ${now.toLocaleTimeString("pt-BR")}).
+
+Pedido do ${profile.userAddress}: "${rawRequest}"
+
+Interprete em português brasileiro: "hoje", "amanhã", "depois de amanhã", "semana que vem", "próxima segunda/terça/etc.", "daqui 2 horas", "às 14h", "14:30", "às 9 da manhã/da noite", etc.
+Duração padrão: 60 minutos se não especificada.
+Timezone: America/Sao_Paulo se não informado.
+
+Após criar o evento, retorne APENAS um objeto JSON nesta estrutura (sem markdown, sem texto fora do JSON):
+{"success": true, "summary": "...", "start": "ISO8601", "end": "ISO8601"}
+
+Se o pedido não tiver data/hora claras, NÃO crie nada e retorne:
+{"success": false, "error": "razão curta em português"}`;
+
+    const r = await callClaude(prompt, CALENDAR_MCP, "calendar");
+    const result = (r && typeof r === "object" && !Array.isArray(r)) ? r : (Array.isArray(r) && r[0]) ? r[0] : null;
+
+    if (result && result.success) {
+      const dt = result.start;
+      const when = dt
+        ? new Date(dt).toLocaleString("pt-BR", { weekday:"long", day:"2-digit", month:"long", hour:"2-digit", minute:"2-digit" })
+        : "";
+      if (state.loaded) await loadEvents();
+      return respond(`Marcado, ${profile.userAddress}. ${result.summary || "Compromisso"}${when?" — "+when:""}.`);
+    }
+    return respond(result?.error ? `Não consegui marcar: ${result.error}` : "Não entendi a data ou o horário. Pode repetir com data e hora claras?");
+  } catch (e) {
+    console.warn("createEvent failed", e);
+    return respond(`Falhou ao criar o evento, ${profile.userAddress}. Verifique a conexão com o Google Calendar.`);
+  }
+}
+
+// ── VOICE (Speech Recognition + Synthesis) ──────────────
+const VOICE = {
+  rec: null, voice: null, listening: false, speaking: false,
+  finalText: "", lastResponse: "",
+};
+
+function voiceSupported() { return !!(window.SpeechRecognition || window.webkitSpeechRecognition); }
+
+function voiceInit() {
+  if (VOICE.rec) return true;
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) return false;
+  const r = new SR();
+  r.lang = "pt-BR"; r.continuous = false; r.interimResults = true; r.maxAlternatives = 1;
+  r.onresult = handleVoiceResult;
+  r.onerror  = (e) => { console.warn("voice error", e.error); setVoiceState("idle"); if (e.error==="not-allowed") showToast("Permissão de microfone negada. Verifique nas configurações do navegador."); };
+  r.onend    = () => { if (VOICE.listening) setVoiceState("idle"); };
+  VOICE.rec = r;
+  loadVoiceVoice();
+  return true;
+}
+
+function loadVoiceVoice() {
+  if (!("speechSynthesis" in window)) return;
+  const pick = () => {
+    const vs = speechSynthesis.getVoices();
+    VOICE.voice = vs.find(v=>v.lang==="pt-BR" && /luciana|maria|joana|francisca|female|google/i.test(v.name))
+              || vs.find(v=>v.lang==="pt-BR")
+              || vs.find(v=>v.lang && v.lang.startsWith("pt"))
+              || null;
+  };
+  pick();
+  speechSynthesis.onvoiceschanged = pick;
+}
+
+function speakAs(text) {
+  if (!("speechSynthesis" in window) || !text) return;
+  try { speechSynthesis.cancel(); } catch{}
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "pt-BR";
+  if (VOICE.voice) u.voice = VOICE.voice;
+  u.rate = 1.05; u.pitch = 1.05; u.volume = 1;
+  u.onstart = () => setVoiceState("speaking");
+  u.onend   = () => { if (VOICE.speaking) setVoiceState("idle"); };
+  u.onerror = () => { if (VOICE.speaking) setVoiceState("idle"); };
+  speechSynthesis.speak(u);
+}
+
+function stopSpeaking() {
+  if ("speechSynthesis" in window) { try { speechSynthesis.cancel(); } catch{} }
+  if (VOICE.speaking) setVoiceState("idle");
+}
+
+function setVoiceState(s) {
+  VOICE.listening = (s === "listening");
+  VOICE.speaking  = (s === "speaking");
+  const body = document.body;
+  body.dataset.voice = s === "idle" ? "" : s;
+  const fab = document.getElementById("voiceFab");
+  fab.classList.toggle("listening", s === "listening");
+  fab.classList.toggle("speaking",  s === "speaking");
+  fab.textContent = s === "listening" ? "🛑" : s === "speaking" ? "🔊" : "🎤";
+  const ov = document.getElementById("voiceOverlay");
+  if (s === "listening" || s === "thinking" || s === "speaking") {
+    ov.classList.add("active"); ov.dataset.mode = s;
+    document.getElementById("voiceLabel").textContent =
+      s === "listening" ? "Ouvindo..." : s === "thinking" ? "Pensando..." : "Respondendo...";
+  } else {
+    ov.classList.remove("active");
+  }
+}
+
+function toggleVoice() {
+  if (VOICE.speaking)  { stopSpeaking(); return; }
+  if (VOICE.listening) { try { VOICE.rec.stop(); } catch{} setVoiceState("idle"); return; }
+  startVoice();
+}
+
+function openConsole() {
+  // Abre o overlay mesmo sem suporte a voz — permite digitar comandos
+  stopSpeaking();
+  const ov = document.getElementById("voiceOverlay");
+  ov.classList.add("active"); ov.dataset.mode = "listening";
+  const t = document.getElementById("voiceTranscript");
+  t.textContent = `Diga ou digite, ${profile.userAddress}`;
+  t.classList.add("placeholder");
+  document.getElementById("voiceLabel").textContent = voiceSupported() ? "Pronta" : "Modo texto";
+  setTimeout(()=>document.getElementById("voiceTextInput")?.focus(), 50);
+}
+
+function startVoice() {
+  if (!voiceInit()) {
+    // Sem reconhecimento: abre só o modo texto
+    showToast("Reconhecimento de voz indisponível aqui — use o campo de texto.");
+    openConsole();
+    return;
+  }
+  stopSpeaking();
+  VOICE.finalText = "";
+  const t = document.getElementById("voiceTranscript");
+  t.textContent = `Diga alguma coisa, ${profile.userAddress}`;
+  t.classList.add("placeholder");
+  try { VOICE.rec.start(); setVoiceState("listening"); }
+  catch(e) {
+    console.warn(e);
+    // Em file:// ou sem permissão, cai pro modo texto
+    openConsole();
+  }
+}
+
+function handleVoiceTextKey(e) { if (e.key === "Enter") submitVoiceText(); }
+
+function submitVoiceText() {
+  const input = document.getElementById("voiceTextInput");
+  const text  = (input?.value||"").trim();
+  if (!text) return;
+  input.value = "";
+  // Se estiver ouvindo, para o mic — vamos usar o texto
+  if (VOICE.listening) { try { VOICE.rec.stop(); } catch{} }
+  const t = document.getElementById("voiceTranscript");
+  t.textContent = text; t.classList.remove("placeholder");
+  setVoiceState("thinking");
+  processCommand(text);
+}
+
+function cancelVoice() {
+  if (VOICE.listening) { try { VOICE.rec.stop(); } catch{} }
+  stopSpeaking();
+  setVoiceState("idle");
+}
+
+function overlayTap(e) {
+  // Fechar só se clicar no fundo, não no orb/texto
+  if (e.target.id === "voiceOverlay") cancelVoice();
+}
+
+function handleVoiceResult(e) {
+  let interim = "", final = "";
+  for (let i = e.resultIndex; i < e.results.length; i++) {
+    const r = e.results[i];
+    if (r.isFinal) final += r[0].transcript;
+    else interim += r[0].transcript;
+  }
+  const shown = (final || interim).trim();
+  const t = document.getElementById("voiceTranscript");
+  if (shown) { t.textContent = shown; t.classList.remove("placeholder"); }
+  if (final) {
+    VOICE.finalText = final.trim();
+    setVoiceState("thinking");
+    processCommand(VOICE.finalText);
+  }
+}
+
+// ── COMMAND PROCESSOR ───────────────────────────────────
+function norm(s) { return (s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim(); }
+
+async function processCommand(raw) {
+  addHistory("user", raw);
+  let cmd = norm(raw).replace(wakeRegex(), "").replace(/[.!?]+$/,"").trim();
+  if (!cmd) { respond(`Não entendi, ${profile.userAddress}. Pode repetir?`); return; }
+
+  let m, resp;
+
+  // ── MEMORY: confirm clear all
+  if (state._pendingClear && /^(sim|isso|confirma|confirmo|pode|apague? tudo|apagar tudo|esque[cç]a tudo)/.test(cmd)) {
+    state._pendingClear = false;
+    clearMemory();
+    return respond(`Memória apagada, ${profile.userAddress}. Começamos do zero.`);
+  }
+
+  // ── MEMORY: clear all (request confirmation)
+  if (/^(esque[cç]a tudo|esque[cç]a toda (a |sua )?mem|limpe? (a |sua |toda a )?mem[oó]ria|apague? toda (a |sua )?mem|apague? tudo da mem)/.test(cmd)) {
+    state._pendingClear = true;
+    setTimeout(()=>{ state._pendingClear = false; }, 30000);
+    return respond("Tem certeza? Diga 'sim' para confirmar apagar tudo da memória.");
+  }
+
+  // ── MEMORY: list / what do you know
+  if (/(o que voc[eê] sabe (sobre|de) (mim|o chefe)|o que sabe sobre mim|suas mem[oó]rias|liste? (as |suas )?mem[oó]rias|me conte sobre mim|tudo que voc[eê] sabe|qual sua mem[oó]ria)/.test(cmd)) {
+    const facts = state.memory.facts;
+    if (!facts.length) return respond(`Ainda não sei nada sobre você, ${profile.userAddress}. Diga 'lembre que ...' para eu começar a aprender.`);
+    const top = facts.slice(0, 4).map(f => f.text).join("; ");
+    return respond(`Sei ${facts.length} coisa${facts.length>1?"s":""} sobre você. Por exemplo: ${top}.`);
+  }
+
+  // ── MEMORY: forget specific
+  if (m = cmd.match(/^(esque[cç]a|esque[cç]ar|esquece|apague? da mem[oó]ria|remov(?:a|er) da mem[oó]ria) (?:da |do |a |o |que )?(.+)$/)) {
+    const needle = m[2].trim();
+    const n = forgetFact(needle);
+    if (n) { render(); return respond(`Esquecido. Removi ${n} ${n>1?"itens":"item"} sobre "${needle}".`); }
+    return respond(`Não achei nada parecido com "${needle}" na memória.`);
+  }
+
+  // ── MEMORY: remember com "lembre/anote" — exige "que/disso/isso" (para não conflitar com tarefa)
+  if (m = cmd.match(/^(lembr(?:e|a|ar)|anot(?:e|a|ar))(?: na (?:sua )?mem[oó]ria)?\s+(?:que|disso|isso)\s+(.+)$/)) {
+    const fact = rememberFact(m[2].trim(), "explicit");
+    render();
+    return respond(fact ? `Anotado na memória, ${profile.userAddress}.` : `Já tinha isso anotado, ${profile.userAddress}.`);
+  }
+  // ── MEMORY: remember com verbos inequívocos (que opcional)
+  if (m = cmd.match(/^(memoriz(?:e|a|ar)|grav(?:e|a|ar)|salv(?:e|a|ar)|guard(?:e|a|ar))(?: na (?:sua )?mem[oó]ria)?\s+(?:que\s+)?(.+)$/)) {
+    const fact = rememberFact(m[2].trim(), "explicit");
+    render();
+    return respond(fact ? `Anotado na memória, ${profile.userAddress}.` : `Já tinha isso anotado, ${profile.userAddress}.`);
+  }
+
+  // ── REMINDERS toggle
+  if (/^(ativ(?:ar|e|a)|lig(?:ar|ue|a)|habilit(?:ar|e|a)) (?:os )?lembretes/.test(cmd)) {
+    if (!remindersEnabled) await toggleReminders(); else respond(`Lembretes já estão ativos, ${profile.userAddress}.`);
+    return remindersEnabled ? respond("Lembretes ativos. Aviso 15min e 5min antes.") : null;
+  }
+  if (/^(desativ(?:ar|e|a)|deslig(?:ar|ue|a)|desabilit(?:ar|e|a)|para(?:r|e) (?:de|com) lembr)/.test(cmd)) {
+    if (remindersEnabled) await toggleReminders();
+    return respond("Lembretes desativados.");
+  }
+
+  // ── CREATE EVENT (Calendar)
+  const isCalCmd = (
+    /^agend/.test(cmd) ||
+    (/^cri(?:ar|e)\b/.test(cmd) && /\b(evento|reuni|compromisso|hor[aá]rio|call|consulta|encontro)\b/.test(cmd)) ||
+    /^(coloc|por|p[oô]e)\b.*\b(agenda|calend[aá]rio)\b/.test(cmd) ||
+    (/^marc(?:ar|a)\b/.test(cmd) && /\b(reuni|compromisso|consulta|encontro|evento|call|hor[aá]rio (?:com|de|para)|na agenda|no calend[aá]rio)\b/.test(cmd) && !/\bcomo (feita|conclui|pronta|done|finaliz|terminad)/.test(cmd))
+  );
+  if (isCalCmd) {
+    await createEvent(raw);
+    return;
+  }
+
+  // ── ADD TASK
+  if (m = cmd.match(/^(adicion(?:ar|e)|anot(?:ar|e|a)|crie?|criar|nov[ao]|lembrar de|lembr(?:ar|e) que|coloca?r?|coloc(?:a|ar)) (?:uma |um |a |o )?(?:tarefa |item |lembrete |compromisso )?(.+)$/)) {
+    const text = capPhrase(m[2]);
+    state.tasks.unshift({ id: Date.now().toString(36)+Math.random().toString(36).slice(2,6), text, urgent:false, done:false, createdAt: new Date().toISOString() });
+    saveTasks(); render();
+    return respond(`Anotado, ${profile.userAddress}. "${text}" entrou na lista.`);
+  }
+
+  // ── MARK DONE
+  if (m = cmd.match(/^(marc(?:ar|a|ou)|conclui(?:r|do|da)?|finaliz(?:ar|ei|ou)|terminei|fiz|feito|completei) (?:a |o )?(?:tarefa )?(.+?)(?: como (feita|conclui(?:da|do)|pronta|done))?$/)) {
+    const needle = norm(m[2]);
+    const t = state.tasks.find(t => !t.done && norm(t.text).includes(needle));
+    if (t) { t.done = true; saveTasks(); render(); return respond(`Feito. "${t.text}" marcada como concluída.`); }
+    return respond(`Não achei nenhuma tarefa parecida com "${m[2]}".`);
+  }
+
+  // ── DELETE TASK
+  if (m = cmd.match(/^(apag(?:ar|a|ue)|exclu(?:ir|a)|remov(?:er|a|e)|delet(?:ar|a|e)|tira(?:r)?) (?:a |o )?(?:tarefa )?(.+)$/)) {
+    const needle = norm(m[2]);
+    const t = state.tasks.find(t => norm(t.text).includes(needle));
+    if (t) { deleteTask(t.id); return respond(`Removida. Apaguei "${t.text}".`); }
+    return respond(`Não encontrei "${m[2]}" na lista.`);
+  }
+
+  // ── MARK URGENT
+  if (m = cmd.match(/^(marc(?:ar|a|ou)|tornar?|deixar?|pôr|por) (?:a |o )?(?:tarefa )?(.+?) (?:como )?urgente?$/)) {
+    const needle = norm(m[2]);
+    const t = state.tasks.find(t => !t.done && norm(t.text).includes(needle));
+    if (t) { t.urgent = true; saveTasks(); render(); return respond(`Ok, "${t.text}" virou urgente.`); }
+    return respond(`Não achei "${m[2]}".`);
+  }
+
+  // ── LIST TASKS
+  if (/^(tarefas?|liste? (as |minhas )?tarefas|me d(iga|ê) (as )?tarefas|quais (as )?tarefas|o que (eu )?tenho (que |pra |para )?fazer|minhas pendencias|pendencias?)/.test(cmd)) {
+    const pend = state.tasks.filter(t=>!t.done);
+    if (!pend.length) return respond(`Sua lista está limpa, ${profile.userAddress}. Nenhuma pendência.`);
+    if (pend.length === 1) return respond(`Uma tarefa pendente: ${pend[0].text}.`);
+    const top = pend.slice(0,5).map(t=>t.text).join("; ");
+    return respond(`${pend.length} pendentes. As principais: ${top}.`);
+  }
+
+  // ── AGENDA / EVENTS
+  if (/(agenda|compromisso|reuni|evento|horario|programa|cronograma)/.test(cmd)) {
+    const today = /(hoje|de hoje|para hoje)/.test(cmd) || !/(amanha|semana|proxim)/.test(cmd);
+    let evs;
+    if (/amanha/.test(cmd)) {
+      const tk = new Date(Date.now()+86400000).toISOString().split("T")[0];
+      evs = state.events.filter(e=>(e.start?.dateTime||e.start?.date||"").startsWith(tk));
+      if (!evs.length) return respond(`Amanhã está livre por enquanto, ${profile.userAddress}.`);
+      return respond(`Amanhã você tem ${evs.length}: ${evs.map(e=>`${e.summary}${e.start?.dateTime?" às "+fmtTime(e.start.dateTime):""}`).join("; ")}.`);
+    }
+    evs = state.events.filter(e=>(e.start?.dateTime||e.start?.date||"").startsWith(todayKey()));
+    if (!evs.length) return respond("Sua agenda de hoje está livre.");
+    return respond(`Hoje você tem ${evs.length} compromisso${evs.length>1?"s":""}: ${evs.map(e=>`${e.summary}${e.start?.dateTime?" às "+fmtTime(e.start.dateTime):""}`).join("; ")}.`);
+  }
+
+  // ── NEXT EVENT
+  if (/^(prox(imo)? (compromisso|evento|reuniao)|qual (o |meu )?prox)/.test(cmd)) {
+    const upcoming = state.events
+      .filter(e=>e.start?.dateTime && new Date(e.start.dateTime) > new Date())
+      .sort((a,b)=>new Date(a.start.dateTime)-new Date(b.start.dateTime))[0];
+    if (!upcoming) return respond("Sem compromissos futuros agendados.");
+    return respond(`Próximo: ${upcoming.summary}, ${new Date(upcoming.start.dateTime).toLocaleString("pt-BR",{weekday:"long",hour:"2-digit",minute:"2-digit"})}.`);
+  }
+
+  // ── EMAILS
+  if (/(email|e-mail|inbox|caixa de entrada|mensagem)/.test(cmd)) {
+    if (/(urgent|important|prior)/.test(cmd)) {
+      const u = state.emails.filter(e=>isPriority(e.sender));
+      if (!u.length) return respond(`Nada urgente na caixa, ${profile.userAddress}.`);
+      return respond(`${u.length} urgente${u.length>1?"s":""}: ${u.slice(0,3).map(e=>{const c=classify(e.sender);return `${c?.label||e.sender} sobre ${e.subject}`}).join("; ")}.`);
+    }
+    if (/(financ|banco|extrato|conta)/.test(cmd)) {
+      const f = state.emails.filter(e=>isFinancial(e.sender));
+      if (!f.length) return respond("Sem novidades financeiras.");
+      return respond(`${f.length} email${f.length>1?"s":""} financeiros recentes: ${f.slice(0,3).map(e=>`${classify(e.sender)?.label||""} ${e.subject}`).join("; ")}.`);
+    }
+    if (/(colegio|escola|montreal|lorena)/.test(cmd)) {
+      const s = state.emails.filter(e=>isSchool(e.sender));
+      if (!s.length) return respond("Nenhum recado do colégio.");
+      return respond(`${s.length} recado${s.length>1?"s":""} do Colégio Montreal: ${s.slice(0,3).map(e=>e.subject).join("; ")}.`);
+    }
+    return respond(`Você tem ${state.emails.length} emails carregados. Posso ler os urgentes, financeiros ou do colégio.`);
+  }
+
+  // ── BRIEFING
+  if (/(briefing|resumo|resumir|me atualize|atualize-me|relatorio|me conte|fala|status|panorama)/.test(cmd)) {
+    respond(`Preparando seu briefing, ${profile.userAddress}.`);
+    await getAI();
+    if (state.aiText) speakAs(state.aiText.replace(/[^\w\s.,;:!?àáâãäéêíïóôõöúçñÀ-ÿ-]/g," ").replace(/\s+/g," "));
+    return;
+  }
+
+  // ── REFRESH
+  if (/^(atualiz|carrega|recarreg|sincroniz|refresh|busca|busque|verific)/.test(cmd)) {
+    respond("Atualizando seus dados.");
+    await loadAll();
+    return;
+  }
+
+  // ── TIME / DATE
+  if (/(que horas|que hora|hora atual|me diz a hora)/.test(cmd)) {
+    const t = new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+    return respond(`São ${t}, ${profile.userAddress}.`);
+  }
+  if (/(que dia|que data|hoje e dia|qual a data)/.test(cmd)) {
+    return respond(`Hoje é ${todayFull()}.`);
+  }
+
+  // ── GREETING
+  if (/^(ola|oi|opa|e ai|bom dia|boa tarde|boa noite|judite)$/.test(cmd)) {
+    return respond(`${greeting().replace(/[☀️🌤️🌙]/g,"").trim()}, ${profile.userAddress}. Em que posso ajudar?`);
+  }
+
+  // ── THANKS
+  if (/^(obrigad[oa]|valeu|tchau|ate mais|fechou|beleza)/.test(cmd)) {
+    return respond(`Sempre às ordens, ${profile.userAddress}.`);
+  }
+
+  // ── OPEN SETTINGS
+  if (/^(abr(?:ir|e|a)|mostr(?:ar|a|e)|chamar?)\s+(?:as |o |o painel de |a tela de )?(?:configura|ajustes|settings|opcoes|perfil|preferencias)/.test(cmd)) {
+    openSettings();
+    return respond("Abrindo as configurações.");
+  }
+
+  // ── HELP
+  if (/(ajuda|comandos|o que voce (faz|sabe|pode)|me ensina|opcoes)/.test(cmd)) {
+    return respond("Posso marcar compromissos na agenda, listar sua agenda, adicionar e concluir tarefas, lembrar fatos sobre você, ler emails urgentes, dar briefing, e ativar lembretes antes dos compromissos. Diga, por exemplo: marcar reunião amanhã às 14h.");
+  }
+
+  // ── FALLBACK: ask Claude with context
+  try {
+    const answer = await askJudite(raw);
+    return respond(answer);
+  } catch {
+    return respond(`Não consegui processar essa, ${profile.userAddress}. Tente reformular.`);
+  }
+}
+
+async function askJudite(question) {
+  const pend = state.tasks.filter(t=>!t.done);
+  const evs  = state.events.filter(e=>(e.start?.dateTime||e.start?.date||"").startsWith(todayKey()));
+  const urgent = state.emails.filter(e=>isPriority(e.sender));
+  const memFacts = state.memory.facts.slice(0, 40).map(f=>"- "+f.text).join("\n") || "(memória vazia)";
+  const memHist  = state.memory.history.slice(-7, -1).map(h=>`${h.role==="user"?profile.userAddress:profile.assistantName}: ${h.text}`).join("\n") || "(primeira conversa)";
+  const ctx = [
+    `Data: ${todayFull()}, ${new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})}`,
+    `Eventos hoje: ${evs.map(e=>e.summary+(e.start?.dateTime?" às "+fmtTime(e.start.dateTime):"")).join("; ")||"nenhum"}`,
+    `Próximos eventos: ${state.events.slice(0,5).map(e=>e.summary).join("; ")||"nenhum"}`,
+    `Tarefas pendentes (${pend.length}): ${pend.slice(0,8).map(t=>t.text).join("; ")||"nenhuma"}`,
+    `Emails urgentes: ${urgent.slice(0,5).map(e=>e.subject).join("; ")||"nenhum"}`,
+  ].join("\n");
+  const prompt = `Você é a ${profile.assistantName}, assistente pessoal de ${profile.userName} (${profile.userAddress}), no estilo Jarvis do Homem de Ferro. Responda em 1-3 frases, em português natural (sem emojis, sem markdown, sem listas), pronta para ser falada em voz alta. Trate-o como ${profile.userAddress}. Use a memória pessoal e a conversa recente para responder de forma contextual.
+
+Memória pessoal (o que você já aprendeu sobre o ${profile.userAddress}):
+${memFacts}
+
+Contexto do dia:
+${ctx}
+
+Conversa recente:
+${memHist}
+
+Pergunta atual do ${profile.userAddress}: ${question}
+
+Após sua resposta, se NESTA pergunta apareceu um FATO NOVO importante sobre o ${profile.userAddress} (preferência, hábito, pessoa, data fixa, gosto) que NÃO está na memória acima, adicione no FINAL uma linha exatamente assim:
+[LEMBRAR: fato curto em uma frase; outro fato se houver]
+
+Não invente fatos. Se nada novo, NÃO adicione a linha [LEMBRAR:].`;
+  const r = await callClaude(prompt);
+  let answer = typeof r === "string" ? r : (Array.isArray(r) ? JSON.stringify(r) : `Resposta indisponível, ${profile.userAddress}.`);
+  const learn = answer.match(/\[LEMBRAR:\s*([^\]]+)\]/i);
+  if (learn) {
+    learn[1].split(";").map(s=>s.trim()).filter(Boolean).forEach(f => rememberFact(f, "auto"));
+    answer = answer.replace(/\[LEMBRAR:[^\]]+\]\s*$/i, "").trim();
+  }
+  return answer || `Sem resposta agora, ${profile.userAddress}.`;
+}
+
+function respond(text) {
+  VOICE.lastResponse = text;
+  addHistory("judite", text);
+  const t = document.getElementById("voiceTranscript");
+  t.textContent = text; t.classList.remove("placeholder");
+  showToast(text);
+  speakAs(text);
+  // Auto-fechar overlay 1.8s após responder (a menos que esteja escutando ou digitando)
+  setTimeout(() => {
+    if (!VOICE.listening && document.activeElement?.id !== "voiceTextInput") {
+      document.getElementById("voiceOverlay").classList.remove("active");
+    }
+  }, 1800);
+}
+
+function showToast(text) {
+  const el = document.getElementById("voiceToast");
+  document.getElementById("voiceToastText").textContent = text;
+  el.classList.add("active");
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(()=> el.classList.remove("active"), 6500);
+}
+
+function capPhrase(s) { s = (s||"").trim(); return s.charAt(0).toUpperCase() + s.slice(1); }
+
+// Preload synthesis voices ASAP (Chrome async load)
+if ("speechSynthesis" in window) { try { speechSynthesis.getVoices(); loadVoiceVoice(); } catch{} }
 
 // ── INIT ─────────────────────────────────────────────────
 document.getElementById("greetingLabel").textContent = greeting();
 document.getElementById("headerDate").textContent    = cap(todayFull());
+applyProfileToUI();
+updateReminderBadge();
 
 // ── API CALL ─────────────────────────────────────────────
 async function callClaude(prompt, mcpUrl, mcpName) {
@@ -420,9 +1533,11 @@ async function callClaude(prompt, mcpUrl, mcpName) {
     if (data.error) throw new Error(data.error.message);
     const text  = (data.content||[]).find(b=>b.type==="text")?.text||"";
     const clean = text.replace(/```json|```/g,"").trim();
-    const m     = clean.match(/\[[\s\S]*\]/);
-    if (!m) return typeof clean==="string"?clean:[];
-    return JSON.parse(m[0]);
+    const arr = clean.match(/\[[\s\S]*\]/);
+    if (arr) { try { const v = JSON.parse(arr[0]); if (Array.isArray(v)) return v; } catch{} }
+    const obj = clean.match(/\{[\s\S]*\}/);
+    if (obj) { try { return JSON.parse(obj[0]); } catch{} }
+    return clean;
   } catch(e) { clearTimeout(timer); throw e; }
 }
 
@@ -471,15 +1586,19 @@ async function getAI() {
     const school = state.emails.filter(e=>isSchool(e.sender));
     const fin    = state.emails.filter(e=>isFinancial(e.sender));
     const evs    = state.events.filter(e=>(e.start?.dateTime||e.start?.date||"").startsWith(todayKey()));
+    const pend   = state.tasks.filter(t=>!t.done);
+    const urgentTasks = pend.filter(t=>t.urgent);
     const ctx    = [
       `Emails urgentes: ${urgent.slice(0,5).map(e=>e.subject).join("; ")||"nenhum"}`,
       `Eventos hoje: ${evs.map(e=>e.summary).join("; ")||"nenhum"}`,
       `Financeiro: ${fin.slice(0,4).map(e=>e.subject).join("; ")||"nenhum"}`,
       `Colégio Montreal: ${school.map(e=>e.subject).join("; ")||"nenhum"}`,
+      `Tarefas pendentes (${pend.length}): ${pend.slice(0,6).map(t=>t.text).join("; ")||"nenhuma"}`,
+      `Tarefas marcadas urgentes: ${urgentTasks.map(t=>t.text).join("; ")||"nenhuma"}`,
     ].join("\n");
-    const r = await callClaude(`Você é o assistente pessoal do Marcello. Escreva um briefing matinal direto em português, máximo 6 linhas. Destaque urgências e dê uma dica de ação. Use emojis.\n\n${ctx}`);
+    const r = await callClaude(`Você é a ${profile.assistantName}, assistente pessoal de ${profile.userName}. Trate-o como ${profile.userAddress}. Escreva um briefing direto em português, no máximo 6 linhas, com tom profissional-amigável (estilo concierge de cockpit). Destaque urgências, agenda e finanças, e termine com uma dica de ação prática. Use emojis com moderação. Não se apresente nem cumprimente — vá direto ao ponto.\n\n${ctx}`);
     state.aiText = typeof r==="string"?r:JSON.stringify(r);
-  } catch { state.aiText = "Não foi possível gerar o briefing."; }
+  } catch { state.aiText = `Sistemas indisponíveis no momento, ${profile.userAddress}. Tente novamente.`; }
   state.aiLoading = false; render();
 }
 
@@ -487,7 +1606,7 @@ async function getAI() {
 function setTab(tab) {
   currentTab = tab;
   document.querySelectorAll(".tab").forEach((t,i)=>{
-    const ids = ["hoje","urgente","financeiro","agenda","colegio","todos"];
+    const ids = ["hoje","urgente","financeiro","agenda","tarefas","memoria","colegio","todos"];
     t.classList.toggle("active", ids[i]===tab);
   });
   render();
@@ -499,10 +1618,12 @@ function updateStats() {
   const evs    = state.events.filter(e=>(e.start?.dateTime||e.start?.date||"").startsWith(todayKey())).length;
   const fin    = state.emails.filter(e=>isFinancial(e.sender)).length;
   const school = state.emails.filter(e=>isSchool(e.sender)).length;
+  const pendingTasks = state.tasks.filter(t=>!t.done).length;
   document.getElementById("s-urgent").textContent = urgent;
   document.getElementById("s-events").textContent = evs;
   document.getElementById("s-fin").textContent    = fin;
   document.getElementById("s-school").textContent = school;
+  document.getElementById("s-tasks").textContent  = pendingTasks;
 }
 
 function setRefreshLoading(on) {
@@ -529,6 +1650,24 @@ function emailRow(email, idx) {
         <div class="row-sub">${trunc(email.subject,55)}</div>
       </div>
       <div class="row-time">${ago(email.date)}</div>
+    </div>`;
+}
+
+function escapeHtml(s){ return (s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+function taskRow(task, idx) {
+  const checkMark = task.done ? "✓" : "";
+  return `
+    <div class="task-row ${task.done?'done':''}" style="animation-delay:${idx*25}ms">
+      <button class="task-check ${task.done?'done':''}" onclick="toggleTask('${task.id}')">${checkMark}</button>
+      <div class="task-body">
+        <div class="task-text">${task.urgent && !task.done ? '<span class="dot"><span></span><i></i></span> ' : ''}${escapeHtml(task.text)}</div>
+        <div class="task-meta">${ago(task.createdAt)}</div>
+      </div>
+      <div class="task-actions">
+        <button class="task-btn ${task.urgent?'urgent-on':''}" onclick="toggleUrgent('${task.id}')" title="Urgente">!</button>
+        <button class="task-btn" onclick="deleteTask('${task.id}')" title="Excluir">×</button>
+      </div>
     </div>`;
 }
 
@@ -589,14 +1728,23 @@ function render() {
     html += `
       <div class="ai-card">
         <div class="ai-header">
-          <span class="ai-title">🤖 Briefing do dia</span>
-          <button class="btn-ai" onclick="getAI()" ${state.aiLoading?"disabled":""}>
-            ${state.aiLoading?spinner():"✨"} ${state.aiLoading?"Analisando...":"Gerar"}
-          </button>
+          <div class="judite-identity" onclick="startVoice()" title="Tocar para falar com a ${profile.assistantName}">
+            <div class="judite-avatar"></div>
+            <div>
+              <div class="judite-name">${profile.assistantName}</div>
+              <div class="judite-role">Assistente de Voz</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:6px;align-items:center">
+            ${state.aiText ? `<button class="btn-speak" onclick="speakAs(document.querySelector('.ai-text')?.textContent||'')" title="Ler em voz alta">🔊</button>` : ""}
+            <button class="btn-ai" onclick="getAI()" ${state.aiLoading?"disabled":""}>
+              ${state.aiLoading?spinner():"✨"} ${state.aiLoading?"Pensando...":"Briefing"}
+            </button>
+          </div>
         </div>
         ${state.aiText
-          ?`<div class="ai-text">${state.aiText}</div>`
-          :`<div class="ai-placeholder">Toque em "Gerar" para seu briefing personalizado com IA.</div>`
+          ?`<div class="ai-says">${profile.assistantName} diz</div><div class="ai-text">${state.aiText}</div>`
+          :`<div class="ai-placeholder">Toque o microfone 🎤 e diga "${profile.assistantName}, ..." — ou peça um briefing.</div>`
         }
       </div>`;
 
@@ -613,6 +1761,10 @@ function render() {
 
     if (!state.loadingEmails && !state.emailError && fin.length)
       html += section("#10b98122","💰","Financeiro",fin.length,"#10b981", fin.slice(0,3).map(emailRow), false,"","","loadEmails");
+
+    const pendingPreview = state.tasks.filter(t=>!t.done).sort((a,b)=>(b.urgent?1:0)-(a.urgent?1:0));
+    if (pendingPreview.length)
+      html += section("#7c3aed22","✅","Tarefas pendentes", pendingPreview.length, "#7c3aed", pendingPreview.slice(0,3).map(taskRow), false, "", "", "");
   }
 
   if (currentTab === "urgente")
@@ -624,6 +1776,73 @@ function render() {
   if (currentTab === "agenda")
     html += section("#3b7fff22","📅","Próximos 7 dias",state.events.length,"#3b7fff", state.events.map(eventRow), state.loadingEvents, state.eventError, "Nenhum evento nos próximos 7 dias.","loadEvents");
 
+  if (currentTab === "tarefas") {
+    const sorted  = [...state.tasks].sort((a,b)=>{
+      if (a.done !== b.done) return a.done?1:-1;
+      if (a.urgent !== b.urgent) return a.urgent?-1:1;
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    });
+    const pending = state.tasks.filter(t=>!t.done).length;
+    const body    = sorted.length ? sorted.map(taskRow).join("") : `<div class="empty">Nenhuma tarefa por aqui. Adicione a primeira acima.</div>`;
+    html += `
+      <div class="section" style="border-color:#7c3aed22">
+        <div class="section-head">
+          <span style="font-size:15px">✅</span>
+          <span class="section-title">Tarefas</span>
+          <span class="section-badge" style="background:#7c3aed22;color:#7c3aed;border:1px solid #7c3aed44">${pending} pend.</span>
+        </div>
+        <div class="tasks-add">
+          <input id="taskInput" placeholder="Nova tarefa..." onkeydown="handleTaskKey(event)" maxlength="120" />
+          <button onclick="addTask()" aria-label="Adicionar">+</button>
+        </div>
+        ${body}
+      </div>`;
+  }
+
+  if (currentTab === "memoria") {
+    const facts = state.memory.facts;
+    const factsBody = facts.length
+      ? facts.map((f,i) => `
+        <div class="task-row" style="animation-delay:${i*20}ms">
+          <div style="width:26px;height:26px;flex-shrink:0;border-radius:50%;background:${f.source==='auto'?'#7c3aed22':'#10b98122'};border:1px solid ${f.source==='auto'?'#7c3aed66':'#10b98166'};display:flex;align-items:center;justify-content:center;font-size:12px;color:${f.source==='auto'?'#a78bfa':'#34d399'}">${f.source==='auto'?'⚡':'✓'}</div>
+          <div class="task-body">
+            <div class="task-text">${escapeHtml(f.text)}</div>
+            <div class="task-meta">${ago(f.createdAt)} · ${f.source==='auto'?'aprendido pela '+profile.assistantName:'ensinado por você'}</div>
+          </div>
+          <div class="task-actions">
+            <button class="task-btn" onclick="deleteFact('${f.id}')" title="Esquecer">×</button>
+          </div>
+        </div>`).join("")
+      : `<div class="empty">Sua memória está vazia. Diga ou digite: "lembre que minha filha se chama Lorena" — ou ensine direto pelo campo abaixo.</div>`;
+    const histRows = state.memory.history.slice(-8).reverse().map(h => `
+      <div class="row">
+        <div class="row-icon" style="background:${h.role==='user'?'#3b7fff22':'#7c3aed22'};font-size:11px;color:${h.role==='user'?'#93c5fd':'#a78bfa'};font-weight:700">${h.role==='user'?'Você':'J'}</div>
+        <div class="row-body"><div class="row-sub" style="white-space:normal;color:var(--text);font-size:12px">${escapeHtml(h.text)}</div></div>
+      </div>`).join("");
+    html += `
+      <div class="section" style="border-color:#10b98122">
+        <div class="section-head">
+          <span style="font-size:15px">🧠</span>
+          <span class="section-title">Memória da ${profile.assistantName}</span>
+          <span class="section-badge" style="background:#10b98122;color:#10b981;border:1px solid #10b98144">${facts.length}</span>
+        </div>
+        <div class="tasks-add">
+          <input id="memInput" placeholder="Ensine um fato sobre você..." onkeydown="handleMemKey(event)" maxlength="200" />
+          <button onclick="addMemFromInput()" aria-label="Lembrar">+</button>
+        </div>
+        ${factsBody}
+      </div>
+      ${state.memory.history.length ? `
+      <div class="section" style="border-color:#3b7fff22">
+        <div class="section-head">
+          <span style="font-size:15px">💬</span>
+          <span class="section-title">Conversa recente</span>
+          <button class="btn-retry" onclick="if(confirm('Apagar todo o histórico de conversa?')){state.memory.history=[];saveMemory();render();}">Limpar</button>
+        </div>
+        ${histRows}
+      </div>` : ""}`;
+  }
+
   if (currentTab === "colegio")
     html += section("#f59e0b22","🏫","Lorena — Colégio Montreal",school.length,"#f59e0b", school.map(emailRow), state.loadingEmails, state.emailError, "Nenhum recado do colégio.","loadEmails");
 
@@ -631,12 +1850,29 @@ function render() {
     html += section("#3b7fff22","📧","Todos os emails",state.emails.length,"#60a5fa", state.emails.map(emailRow), state.loadingEmails, state.emailError, "Nenhum email carregado.","loadEmails");
   }
 
+  // Preserva valor/foco de inputs entre renders
+  const _snap = (id) => {
+    const el = document.getElementById(id);
+    return { val: el?.value || "", focused: document.activeElement === el };
+  };
+  const snapTask = _snap("taskInput");
+  const snapMem  = _snap("memInput");
+
   // Limpa e injeta (preserva hero)
   const nodes = Array.from(c.childNodes).filter(n=>n.id!=="hero");
   nodes.forEach(n=>n.remove());
   const tmp = document.createElement("div");
   tmp.innerHTML = html;
   while(tmp.firstChild) c.appendChild(tmp.firstChild);
+
+  const _restore = (id, snap) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (snap.val) el.value = snap.val;
+    if (snap.focused) el.focus();
+  };
+  _restore("taskInput", snapTask);
+  _restore("memInput",  snapMem);
 }
 
 // ── PWA INSTALL ───────────────────────────────────────────
